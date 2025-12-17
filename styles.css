@@ -1,0 +1,16 @@
+body { font-family: Arial, sans-serif; margin: 20px; }
+button { margin: 5px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+button:hover { background: #0056b3; }
+ul { list-style-type: none; }
+li { margin: 10px 0; }
+form { margin-top: 20px; }
+input, textarea { display: block; margin: 5px 0; width: 100%; }
+#error { color: red; }
+#loading { font-size: 20px; color: blue; }
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+    body { margin: 10px; }
+    button { width: 100%; }
+    input, textarea { width: 100%; }
+}
