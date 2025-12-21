@@ -36,6 +36,29 @@ namespace ProjectService.Services
             return project;
         }
 
+        public async Task<Project> DenyProjectAsync(int id)
+        {
+            var project = await _context.Projects.FindAsync(id);
+            if (project != null)
+            {
+                project.IsApproved = false;
+                project.IsDenied = true;
+                await _context.SaveChangesAsync();
+            }
+            return project;
+        }
+
+        public async Task<Project> SubmitProjectAsync(int id)
+        {
+            var project = await _context.Projects.FindAsync(id);
+            if (project != null)
+            {
+                project.IsSubmitted = true;
+                await _context.SaveChangesAsync();
+            }
+            return project;
+        }
+
         public async Task<Project> UpdateProjectAsync(int id, Project updatedProject)
         {
             var project = await _context.Projects.FindAsync(id);
@@ -63,6 +86,15 @@ namespace ProjectService.Services
             milestone.DueDate = updatedMilestone.DueDate;
             await _context.SaveChangesAsync();
             return milestone;
+        }
+
+        public async Task<bool> DeleteMilestoneAsync(int id)
+        {
+            var milestone = await _context.Milestones.FindAsync(id);
+            if (milestone == null) return false;
+            _context.Milestones.Remove(milestone);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

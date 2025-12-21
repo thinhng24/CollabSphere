@@ -13,6 +13,8 @@ namespace ProjectService.Models
         public string Description { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public bool IsApproved { get; set; } = false;
+        public bool IsDenied { get; set; } = false;
+        public bool IsSubmitted { get; set; } = false;
         public int CreatorId { get; set; }
         public ICollection<Milestone> Milestones { get; set; }
     }

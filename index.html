@@ -3,7 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Thêm thẻ này để fix lỗi viewport -->
-    <title>Project Management - Lecturer UI</title>
+    <title>CollabSphere Project Module</title>
+
+
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">CollabSphere</div>
+            <ul class="sidebar-menu">
+                <li class="active">Projects</li>
+                <li>Milestones</li>
+                <li>Lecturers</li>
+                <li>Students</li>
+                <li>Subjects</li>
+                <li>Reports</li>
+                <li>Logout</li>
+            </ul>
+        </aside>
+        <main class="main-content">
+            <header class="main-header">
+                <input type="text" class="search" placeholder="Search project...">
+                <button class="add-project-btn" onclick="openProjectModal()">+ Add project</button>
+                <div class="user-info">
+                    <span class="user-name">Admin</span>
+                    <span class="user-avatar"></span>
+                </div>
+            </header>
+            <section id="projectsSection">
+                <table class="projects-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Creator</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ngôn ngữ ABC</td>
+                            <td>Computer Science</td>
+                            <td>An</td>
+                            <td><span class="status status-pending">Tạp hợp</span></td>
+                        </tr>
+                        <tr>
+                            <td>An Ngioen</td>
+                            <td>Computer Science</td>
+                            <td>VT</td>
+                            <td><span class="status status-reject">Rejected</span></td>
+                        </tr>
+                        <tr>
+                            <td>Kiểu Bùng Wầu</td>
+                            <td>Computer Science</td>
+                            <td>An</td>
+                            <td><span class="status status-approve">Đã hoàn thành</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    <button>&lt;</button>
+                    <span>1</span>
+                    <button>&gt;</button>
+                </div>
+            </section>
+
+            <!-- Project Detail Page -->
+            <section id="projectDetailSection" style="display:none;">
+                <div class="profile">
+                    <div class="avatar"></div>
+                    <div class="profile-info">
+                        <div class="profile-name">An Nguyen</div>
+                        <div class="profile-desc">tribique cadenare eduivin</div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="profile-btn">3BF</button>
+                        <button class="profile-btn profile-btn-danger">Rejected</button>
+                    </div>
+                </div>
+                <div class="project-details">
+                    <table>
+                        <tr><th>Project Name</th><td>Ngôn ngữ ABC</td></tr>
+                        <tr><th>Department</th><td>Computer Science</td></tr>
+                        <tr><th>Objective</th><td>Vuliuotte lines</td></tr>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <button>&lt;</button>
+                    <span>1</span>
+                    <button>&gt;</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Create Project Modal -->
+    <div class="modal" id="projectModal" style="display:none;">
+        <div class="modal-content">
+            <h3>Create Project</h3>
+            <form>
+                <label>Project Name</label>
+                <input type="text" placeholder="Project name">
+                <label>Department</label>
+                <select>
+                    <option>Computer Science</option>
+                    <option>Mathematics</option>
+                </select>
+                <label>Objective</label>
+                <textarea placeholder="Objective"></textarea>
+                <button type="button" class="modal-btn" onclick="closeProjectModal()">Cancel</button>
+                <button type="submit" class="modal-btn modal-btn-primary">Create</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Milestone Modal -->
+    <div class="modal" id="milestoneModal" style="display:none;">
+        <div class="modal-content">
+            <h3>Add Milestone</h3>
+            <form>
+                <label>Milestone Name</label>
+                <input type="text" placeholder="Milestone name">
+                <label>Project</label>
+                <input type="text" value="Ngôn ngữ ABC" readonly>
+                <label>Status</label>
+                <select>
+                    <option>Active</option>
+                    <option>Completed</option>
+                </select>
+                <button type="button" class="modal-btn" onclick="closeMilestoneModal()">Cancel</button>
+                <button type="submit" class="modal-btn modal-btn-primary">Add</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    // Modal logic
+    function openProjectModal() {
+        document.getElementById('projectModal').style.display = 'flex';
+    }
+    function closeProjectModal() {
+        document.getElementById('projectModal').style.display = 'none';
+    }
+    function openMilestoneModal() {
+        document.getElementById('milestoneModal').style.display = 'flex';
+    }
+    function closeMilestoneModal() {
+        document.getElementById('milestoneModal').style.display = 'none';
+    }
+    // Demo: click project row to show detail
+    document.querySelectorAll('.projects-table tbody tr').forEach(row => {
+        row.addEventListener('click', function() {
+            document.getElementById('projectsSection').style.display = 'none';
+            document.getElementById('projectDetailSection').style.display = 'block';
+        });
+    });
+    // Demo: back to list
+    document.querySelectorAll('.pagination button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('projectsSection').style.display = 'block';
+            document.getElementById('projectDetailSection').style.display = 'none';
+        });
+    });
+    </script>
+
+
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>

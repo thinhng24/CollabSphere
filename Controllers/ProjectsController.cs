@@ -55,6 +55,20 @@ namespace ProjectService.Controllers
             return project != null ? Ok(project) : NotFound();
         }
 
+        [HttpPut("{id}/deny")]
+        public async Task<IActionResult> DenyProject(int id)
+        {
+            var project = await _projectService.DenyProjectAsync(id);
+            return project != null ? Ok(project) : NotFound();
+        }
+
+        [HttpPut("{id}/submit")]
+        public async Task<IActionResult> SubmitProject(int id)
+        {
+            var project = await _projectService.SubmitProjectAsync(id);
+            return project != null ? Ok(project) : NotFound();
+        }
+
         [HttpPost("{id}/milestones")]
         public async Task<IActionResult> AddMilestone(int id, [FromBody] Milestone milestone)
         {
@@ -69,6 +83,13 @@ namespace ProjectService.Controllers
             return updated != null ? Ok(updated) : NotFound();
         }
 
+        [HttpDelete("milestones/{id}")]
+        public async Task<IActionResult> DeleteMilestone(int id)
+        {
+            var deleted = await _projectService.DeleteMilestoneAsync(id);
+            return deleted ? Ok() : NotFound();
+        }
+
         [HttpGet("{id}/ai-analyze")]
         public async Task<IActionResult> AnalyzeProjectWithAi(int id)
         {
@@ -78,6 +99,14 @@ namespace ProjectService.Controllers
             var prompt = $"Analyze this project: {project.Description}. Milestones: {string.Join(", ", project.Milestones.Select(m => $"{m.Title} (Due: {m.DueDate}, Completed: {m.IsCompleted})"))}. Suggest improvements or new milestones.";
             var analysis = await _aiService.GenerateProjectSuggestionAsync(prompt);
             return Ok(new { Analysis = analysis });
+        }
+
+        [HttpPost("ai-suggest-milestones")]
+        public async Task<IActionResult> SuggestMilestones([FromBody] SyllabusRequest request)
+        {
+            var prompt = $"Given this syllabus, suggest a list of project milestones: {request.Syllabus}";
+            var suggestions = await _aiService.GenerateMilestoneSuggestionsAsync(prompt);
+            return Ok(new { Milestones = suggestions });
         }
     }
 }
