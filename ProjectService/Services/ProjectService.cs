@@ -25,7 +25,7 @@ namespace ProjectService.Services
             return await _context.Projects.Include(p => p.Milestones).ToListAsync();
         }
 
-        public async Task<Project> ApproveProjectAsync(int id)
+        public async Task<Project?> ApproveProjectAsync(int id)
         {
             var project = await _context.Projects.FindAsync(id);
             if (project != null)
@@ -36,7 +36,7 @@ namespace ProjectService.Services
             return project;
         }
 
-        public async Task<Project> DenyProjectAsync(int id)
+        public async Task<Project?> DenyProjectAsync(int id)
         {
             var project = await _context.Projects.FindAsync(id);
             if (project != null)
@@ -48,7 +48,7 @@ namespace ProjectService.Services
             return project;
         }
 
-        public async Task<Project> SubmitProjectAsync(int id)
+        public async Task<Project?> SubmitProjectAsync(int id)
         {
             var project = await _context.Projects.FindAsync(id);
             if (project != null)
@@ -59,7 +59,7 @@ namespace ProjectService.Services
             return project;
         }
 
-        public async Task<Project> UpdateProjectAsync(int id, Project updatedProject)
+        public async Task<Project?> UpdateProjectAsync(int id, Project updatedProject)
         {
             var project = await _context.Projects.FindAsync(id);
             if (project == null) return null;
@@ -77,7 +77,7 @@ namespace ProjectService.Services
             return milestone;
         }
 
-        public async Task<Milestone> UpdateMilestoneAsync(int id, Milestone updatedMilestone)
+        public async Task<Milestone?> UpdateMilestoneAsync(int id, Milestone updatedMilestone)
         {
             var milestone = await _context.Milestones.FindAsync(id);
             if (milestone == null) return null;

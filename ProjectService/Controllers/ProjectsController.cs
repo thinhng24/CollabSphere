@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectService.Models;
 using ProjectService.Services;
+using ProjectServiceService = ProjectService.Services.ProjectService;
+using AiBedrockServiceType = ProjectService.Services.AiBedrockService;
 
 namespace ProjectService.Controllers
 {
@@ -45,28 +47,28 @@ namespace ProjectService.Controllers
         public async Task<IActionResult> UpdateProject(int id, [FromBody] Project project)
         {
             var updated = await _projectService.UpdateProjectAsync(id, project);
-            return updated != null ? Ok(updated) : NotFound();
+            return updated is not null ? Ok(updated) : NotFound();
         }
 
         [HttpPut("{id}/approve")]
         public async Task<IActionResult> ApproveProject(int id)
         {
             var project = await _projectService.ApproveProjectAsync(id);
-            return project != null ? Ok(project) : NotFound();
+            return project is not null ? Ok(project) : NotFound();
         }
 
         [HttpPut("{id}/deny")]
         public async Task<IActionResult> DenyProject(int id)
         {
             var project = await _projectService.DenyProjectAsync(id);
-            return project != null ? Ok(project) : NotFound();
+            return project is not null ? Ok(project) : NotFound();
         }
 
         [HttpPut("{id}/submit")]
         public async Task<IActionResult> SubmitProject(int id)
         {
             var project = await _projectService.SubmitProjectAsync(id);
-            return project != null ? Ok(project) : NotFound();
+            return project is not null ? Ok(project) : NotFound();
         }
 
         [HttpPost("{id}/milestones")]

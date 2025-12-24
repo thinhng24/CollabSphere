@@ -2,6 +2,6 @@ namespace ProjectService.Models
 {
     public class SyllabusRequest
     {
-        public string Syllabus { get; set; }
+        public required string Syllabus { get; set; }
     }
 }
