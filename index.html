@@ -83,7 +83,8 @@
             <section id="lecturerPage" class="page-section">
                 <div class="page-header-with-search">
                     <div class="search-container">
-                        <input type="text" class="search-input" placeholder="Q Search..." id="projectSearch">
+                        <label for="projectSearch" class="sr-only">Search projects</label>
+                        <input type="text" class="search-input" placeholder="Q Search..." id="projectSearch" title="Search projects" aria-label="Search projects">
                     </div>
                     <button class="btn-primary" onclick="openCreateProjectModal()">+ Add project</button>
                 </div>
@@ -93,7 +94,7 @@
             </section>
 
             <!-- Head Dept Page -->
-            <section id="headDeptPage" class="page-section" style="display:none;">
+            <section id="headDeptPage" class="page-section hidden">
                 <div class="page-header">
                     <h1 class="page-title">Review Projects</h1>
                 </div>
@@ -103,21 +104,21 @@
             </section>
 
             <!-- Project Detail Page -->
-            <section id="projectDetailPage" class="page-section" style="display:none;">
+            <section id="projectDetailPage" class="page-section hidden">
                 <div class="page-header">
                     <h1 class="page-title">Project Detail</h1>
-                    <button class="btn-primary" id="aiSuggestionBtn" onclick="openAISuggestionModal()" style="display:none;">AI Suggestion</button>
+                    <button class="btn-primary hidden" id="aiSuggestionBtn" onclick="openAISuggestionModal()">AI Suggestion</button>
                 </div>
                 
                 <!-- User Profile Section -->
-                <div class="user-profile-section" id="userProfileSection" style="display:none;">
+                <div class="user-profile-section hidden" id="userProfileSection">
                     <div class="user-avatar-large"></div>
                     <div class="user-info">
                         <div class="user-name-large" id="userNameLarge">An Nguyen</div>
                         <div class="user-email" id="userEmail">an.nguyen@cosra.edu.vn</div>
                         <span class="role-badge" id="userRoleBadge">Lecturer</span>
                     </div>
-                    <div class="user-profile-actions" id="userProfileActions" style="display:none;">
+                    <div class="user-profile-actions hidden" id="userProfileActions">
                         <button class="btn-edit" onclick="enableProjectEdit()">Edit</button>
                         <button class="btn-delete" onclick="deleteProject(currentProjectId)">Delete</button>
                     </div>
@@ -140,17 +141,17 @@
                         </div>
                     </div>
                     
-                    <div class="project-name-section" id="projectNameSection" style="display:none;">
-                        <label class="form-label">Project N</label>
-                        <input type="text" id="projectNameInput" class="form-input">
+                    <div class="project-name-section hidden" id="projectNameSection">
+                        <label for="projectNameInput" class="form-label">Project N</label>
+                        <input type="text" id="projectNameInput" class="form-input" placeholder="Enter project name" title="Project name">
                     </div>
                     
-                    <div class="objective-section" id="objectiveSection" style="display:none;">
-                        <label class="form-label">Objective</label>
-                        <textarea id="projectObjectiveInput" class="form-textarea"></textarea>
+                    <div class="objective-section hidden" id="objectiveSection">
+                        <label for="projectObjectiveInput" class="form-label">Objective</label>
+                        <textarea id="projectObjectiveInput" class="form-textarea" placeholder="Enter project objective" title="Project objective"></textarea>
                     </div>
                     
-                    <div class="project-actions" id="projectActions" style="display:none;">
+                    <div class="project-actions hidden" id="projectActions">
                         <button class="btn-primary" onclick="updateProject()">Save Changes</button>
                         <button class="btn-secondary" onclick="submitProjectForReview()">Submit for Review</button>
                     </div>
@@ -168,7 +169,7 @@
                                 <!-- Milestones will be loaded here -->
                             </tbody>
                         </table>
-                        <div class="milestone-actions" id="milestoneActions" style="display:none;">
+                        <div class="milestone-actions hidden" id="milestoneActions">
                             <button class="btn-secondary" onclick="openAddMilestoneModal()">+ Add Milestone</button>
                         </div>
                     </div>
@@ -178,29 +179,29 @@
     </div>
 
     <!-- Create Project Modal -->
-    <div class="modal" id="createProjectModal" style="display:none;">
+    <div class="modal hidden" id="createProjectModal">
         <div class="modal-content">
             <h3>Create Project</h3>
             <form id="createProjectForm">
-                <label class="form-label">Project Name</label>
-                <input type="text" id="newProjectName" class="form-input" placeholder="Project name" required>
+                <label for="newProjectName" class="form-label">Project Name</label>
+                <input type="text" id="newProjectName" class="form-input" placeholder="Project name" title="Enter project name" required>
                 
-                <label class="form-label">Department</label>
-                <select id="newProjectDepartment" class="form-input" required>
+                <label for="newProjectDepartment" class="form-label">Department</label>
+                <select id="newProjectDepartment" class="form-input" title="Select department" required>
                     <option value="">Select Department</option>
                     <option value="Computer Science">Computer Science</option>
                     <option value="Mathematics">Mathematics</option>
                     <option value="Engineering">Engineering</option>
                 </select>
                 
-                <label class="form-label">Objective</label>
-                <textarea id="newProjectObjective" class="form-textarea" placeholder="Objective" required></textarea>
+                <label for="newProjectObjective" class="form-label">Objective</label>
+                <textarea id="newProjectObjective" class="form-textarea" placeholder="Objective" title="Enter project objective" required></textarea>
                 
-                <label class="form-label">Code</label>
-                <input type="text" id="newProjectCode" class="form-input" placeholder="Project code">
+                <label for="newProjectCode" class="form-label">Code</label>
+                <input type="text" id="newProjectCode" class="form-input" placeholder="Project code" title="Enter project code">
                 
-                <label class="form-label">Syllabus (for AI suggestions)</label>
-                <textarea id="projectSyllabus" class="form-textarea" placeholder="Paste syllabus content here..."></textarea>
+                <label for="projectSyllabus" class="form-label">Syllabus (for AI suggestions)</label>
+                <textarea id="projectSyllabus" class="form-textarea" placeholder="Paste syllabus content here..." title="Paste syllabus content for AI milestone suggestions"></textarea>
                 
                 <div class="modal-actions">
                     <button type="button" class="btn-secondary" onclick="closeCreateProjectModal()">Cancel</button>
@@ -211,18 +212,18 @@
     </div>
 
     <!-- Add Milestone Modal -->
-    <div class="modal" id="addMilestoneModal" style="display:none;">
+    <div class="modal hidden" id="addMilestoneModal">
         <div class="modal-content">
             <h3>Add Milestone</h3>
             <form id="addMilestoneForm">
-                <label class="form-label">Milestone Name</label>
-                <input type="text" id="milestoneName" class="form-input" placeholder="Milestone name" required>
+                <label for="milestoneName" class="form-label">Milestone Name</label>
+                <input type="text" id="milestoneName" class="form-input" placeholder="Milestone name" title="Enter milestone name" required>
                 
-                <label class="form-label">Project</label>
-                <input type="text" id="milestoneProject" class="form-input" readonly>
+                <label for="milestoneProject" class="form-label">Project</label>
+                <input type="text" id="milestoneProject" class="form-input" readonly title="Project name (read-only)">
                 
-                <label class="form-label">Status</label>
-                <select id="milestoneStatus" class="form-input" required>
+                <label for="milestoneStatus" class="form-label">Status</label>
+                <select id="milestoneStatus" class="form-input" title="Select milestone status" required>
                     <option value="Active">Active</option>
                     <option value="Completed">Completed</option>
                 </select>
@@ -236,18 +237,18 @@
     </div>
 
     <!-- Edit Milestone Modal -->
-    <div class="modal" id="editMilestoneModal" style="display:none;">
+    <div class="modal hidden" id="editMilestoneModal">
         <div class="modal-content">
             <h3>Edit Milestone</h3>
             <form id="editMilestoneForm">
-                <label class="form-label">Milestone Name</label>
-                <input type="text" id="editMilestoneName" class="form-input" required>
+                <label for="editMilestoneName" class="form-label">Milestone Name</label>
+                <input type="text" id="editMilestoneName" class="form-input" placeholder="Enter milestone name" title="Milestone name" required>
                 
-                <label class="form-label">Description</label>
-                <textarea id="editMilestoneDescription" class="form-textarea"></textarea>
+                <label for="editMilestoneDescription" class="form-label">Description</label>
+                <textarea id="editMilestoneDescription" class="form-textarea" placeholder="Enter milestone description" title="Milestone description"></textarea>
                 
-                <label class="form-label">Due Date</label>
-                <input type="date" id="editMilestoneDueDate" class="form-input" required>
+                <label for="editMilestoneDueDate" class="form-label">Due Date</label>
+                <input type="date" id="editMilestoneDueDate" class="form-input" title="Select milestone due date" required>
                 
                 <div class="modal-actions">
                     <button type="button" class="btn-secondary" onclick="closeEditMilestoneModal()">Cancel</button>
@@ -258,7 +259,7 @@
     </div>
 
     <!-- AI Suggestion Modal -->
-    <div class="modal" id="aiSuggestionModal" style="display:none;">
+    <div class="modal hidden" id="aiSuggestionModal">
         <div class="modal-content ai-modal">
             <h2 class="ai-modal-title">AI Suggestion</h2>
             <p class="ai-modal-subtitle">Select missionss to add:</p>
@@ -273,12 +274,12 @@
     </div>
 
     <!-- Loading Indicator -->
-    <div id="loading" style="display:none;" class="loading-overlay">
+    <div id="loading" class="loading-overlay hidden">
         <div class="loading-spinner">Loading...</div>
     </div>
 
     <!-- Error Message -->
-    <div id="error" style="display:none;" class="error-message"></div>
+    <div id="error" class="error-message hidden"></div>
 
     <script src="app.js"></script>
 </body>

@@ -10,10 +10,10 @@ namespace ProjectService.Controllers
     [Authorize]
     public class ProjectsController : ControllerBase
     {
-        private readonly ProjectService _projectService;
-        private readonly AiBedrockService _aiService;
+        private readonly Services.ProjectService _projectService;
+        private readonly Services.AiBedrockService _aiService;
 
-        public ProjectsController(ProjectService projectService, AiBedrockService aiService)
+        public ProjectsController(Services.ProjectService projectService, Services.AiBedrockService aiService)
         {
             _projectService = projectService;
             _aiService = aiService;

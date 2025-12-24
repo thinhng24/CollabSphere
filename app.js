@@ -6,6 +6,41 @@ let aiSuggestions = [];
 let selectedSuggestions = new Set();
 const token = localStorage.getItem('token') || 'YOUR_JWT_TOKEN'; // Get from localStorage or use default
 
+// Helper functions for show/hide using classes
+function showElement(element) {
+    if (typeof element === 'string') {
+        element = document.getElementById(element);
+    }
+    if (element) {
+        element.classList.remove('hidden');
+        if (element.classList.contains('user-profile-section') || element.classList.contains('modal')) {
+            element.classList.add('flex-visible');
+        } else {
+            element.classList.add('visible');
+        }
+    }
+}
+
+function hideElement(element) {
+    if (typeof element === 'string') {
+        element = document.getElementById(element);
+    }
+    if (element) {
+        element.classList.add('hidden');
+        element.classList.remove('visible', 'flex-visible');
+    }
+}
+
+function showFlex(element) {
+    if (typeof element === 'string') {
+        element = document.getElementById(element);
+    }
+    if (element) {
+        element.classList.remove('hidden');
+        element.classList.add('flex-visible');
+    }
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initializeNavigation();
@@ -24,9 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function enableProjectEdit() {
-    document.getElementById('projectNameSection').style.display = 'block';
-    document.getElementById('objectiveSection').style.display = 'block';
-    document.getElementById('projectActions').style.display = 'block';
+    showElement('projectNameSection');
+    showElement('objectiveSection');
+    showElement('projectActions');
 }
 
 // Navigation
@@ -46,7 +81,7 @@ function initializeNavigation() {
 function switchPage(page) {
     // Hide all pages
     document.querySelectorAll('.page-section').forEach(section => {
-        section.style.display = 'none';
+        hideElement(section);
     });
     
     // Update menu - remove active from all
@@ -57,20 +92,20 @@ function switchPage(page) {
     // Show selected page and set active menu
     switch(page) {
         case 'lecturer':
-            document.getElementById('lecturerPage').style.display = 'block';
+            showElement('lecturerPage');
             document.getElementById('lecturerMenu').classList.add('active');
             currentUserRole = 'lecturer';
             loadLecturerProjects();
             break;
         case 'headDept':
-            document.getElementById('headDeptPage').style.display = 'block';
+            showElement('headDeptPage');
             document.getElementById('headDeptMenu').classList.add('active');
             currentUserRole = 'headDept';
             loadHeadDeptProjects();
             break;
         case 'dashboard':
         case 'projects':
-            document.getElementById('lecturerPage').style.display = 'block';
+            showElement('lecturerPage');
             document.getElementById('lecturerMenu').classList.add('active');
             loadLecturerProjects();
             break;
@@ -97,19 +132,19 @@ function loadInitialPage() {
 
 // Loading & Error Handling
 function showLoading() {
-    document.getElementById('loading').style.display = 'flex';
+    showFlex('loading');
 }
 
 function hideLoading() {
-    document.getElementById('loading').style.display = 'none';
+    hideElement('loading');
 }
 
 function showError(message) {
     const errorDiv = document.getElementById('error');
     errorDiv.textContent = message;
-    errorDiv.style.display = 'block';
+    showElement(errorDiv);
     setTimeout(() => {
-        errorDiv.style.display = 'none';
+        hideElement(errorDiv);
     }, 5000);
 }
 
@@ -266,24 +301,24 @@ async function viewProjectDetail(projectId) {
         
         // Hide all pages
         document.querySelectorAll('.page-section').forEach(section => {
-            section.style.display = 'none';
+            hideElement(section);
         });
         
         // Show project detail page
-        document.getElementById('projectDetailPage').style.display = 'block';
+        showElement('projectDetailPage');
         
         // Show user profile section for lecturer
         const userProfileSection = document.getElementById('userProfileSection');
         const userProfileActions = document.getElementById('userProfileActions');
         if (currentUserRole === 'lecturer') {
-            userProfileSection.style.display = 'flex';
+            showFlex('userProfileSection');
             if (!project.isSubmitted) {
-                userProfileActions.style.display = 'flex';
+                showFlex('userProfileActions');
             } else {
-                userProfileActions.style.display = 'none';
+                hideElement('userProfileActions');
             }
         } else {
-            userProfileSection.style.display = 'none';
+            hideElement('userProfileSection');
         }
         
         // Populate project data in display mode
@@ -299,31 +334,36 @@ async function viewProjectDetail(projectId) {
         
         // Show/hide edit sections
         const isEditable = currentUserRole === 'lecturer' && !project.isSubmitted;
-        document.getElementById('projectNameSection').style.display = isEditable ? 'block' : 'none';
-        document.getElementById('objectiveSection').style.display = isEditable ? 'block' : 'none';
+        if (isEditable) {
+            showElement('projectNameSection');
+            showElement('objectiveSection');
+        } else {
+            hideElement('projectNameSection');
+            hideElement('objectiveSection');
+        }
         
         // Show/hide AI suggestion button based on role
         const aiBtn = document.getElementById('aiSuggestionBtn');
         if (currentUserRole === 'lecturer' && !project.isSubmitted) {
-            aiBtn.style.display = 'block';
+            showElement(aiBtn);
         } else {
-            aiBtn.style.display = 'none';
+            hideElement(aiBtn);
         }
         
         // Show/hide milestone actions
         const milestoneActions = document.getElementById('milestoneActions');
         if (currentUserRole === 'lecturer' && !project.isSubmitted) {
-            milestoneActions.style.display = 'block';
+            showElement(milestoneActions);
         } else {
-            milestoneActions.style.display = 'none';
+            hideElement(milestoneActions);
         }
         
         // Show/hide project actions
         const projectActions = document.getElementById('projectActions');
         if (currentUserRole === 'lecturer' && !project.isSubmitted) {
-            projectActions.style.display = 'block';
+            showElement(projectActions);
         } else {
-            projectActions.style.display = 'none';
+            hideElement(projectActions);
         }
         
         // Store current project for updates
@@ -370,14 +410,14 @@ function displayMilestones(milestones) {
 
 // Create Project
 function openCreateProjectModal() {
-    document.getElementById('createProjectModal').style.display = 'flex';
+    showFlex('createProjectModal');
     document.getElementById('newProjectName').value = '';
     document.getElementById('newProjectObjective').value = '';
     document.getElementById('projectSyllabus').value = '';
 }
 
 function closeCreateProjectModal() {
-    document.getElementById('createProjectModal').style.display = 'none';
+    hideElement('createProjectModal');
 }
 
 function initializeForms() {
@@ -551,34 +591,39 @@ async function deleteProject(projectId) {
 
 // Milestones
 function openAddMilestoneModal() {
-    document.getElementById('addMilestoneModal').style.display = 'flex';
+    const projectName = document.getElementById('projectNameDisplay').textContent || 'Project';
+    showFlex('addMilestoneModal');
     document.getElementById('milestoneName').value = '';
-    document.getElementById('milestoneDescription').value = '';
-    document.getElementById('milestoneDueDate').value = '';
+    document.getElementById('milestoneProject').value = projectName;
+    document.getElementById('milestoneStatus').value = 'Active';
 }
 
 function closeAddMilestoneModal() {
-    document.getElementById('addMilestoneModal').style.display = 'none';
+    hideElement('addMilestoneModal');
 }
 
 async function addMilestone() {
     const title = document.getElementById('milestoneName').value;
-    const description = document.getElementById('milestoneDescription').value;
-    const dueDate = document.getElementById('milestoneDueDate').value;
+    const status = document.getElementById('milestoneStatus').value;
     
-    if (!title || !dueDate) {
-        showError('Milestone name and due date are required');
+    if (!title) {
+        showError('Milestone name is required');
         return;
     }
     
     showLoading();
     try {
+        // Calculate due date (30 days from now)
+        const dueDate = new Date();
+        dueDate.setDate(dueDate.getDate() + 30);
+        
         await apiCall(`/projects/${currentProjectId}/milestones`, {
             method: 'POST',
             body: {
                 title: title,
-                description: description,
-                dueDate: dueDate
+                description: '',
+                dueDate: dueDate.toISOString().split('T')[0],
+                isCompleted: status === 'Completed'
             }
         });
         
@@ -594,14 +639,14 @@ async function addMilestone() {
 
 function openEditMilestoneModal(id, title, description, dueDate) {
     currentMilestoneId = id;
-    document.getElementById('editMilestoneModal').style.display = 'flex';
+    showFlex('editMilestoneModal');
     document.getElementById('editMilestoneName').value = title;
     document.getElementById('editMilestoneDescription').value = description || '';
     document.getElementById('editMilestoneDueDate').value = dueDate.split('T')[0]; // Format date
 }
 
 function closeEditMilestoneModal() {
-    document.getElementById('editMilestoneModal').style.display = 'none';
+    hideElement('editMilestoneModal');
     currentMilestoneId = null;
 }
 
@@ -682,7 +727,7 @@ async function getAISuggestions(syllabus, projectId) {
         selectedSuggestions.clear();
         
         displayAISuggestions();
-        document.getElementById('aiSuggestionModal').style.display = 'flex';
+        showFlex('aiSuggestionModal');
     } catch (error) {
         showError('Failed to get AI suggestions: ' + error.message);
     } finally {
@@ -716,7 +761,7 @@ function toggleSuggestion(index) {
 }
 
 function closeAISuggestionModal() {
-    document.getElementById('aiSuggestionModal').style.display = 'none';
+    hideElement('aiSuggestionModal');
     selectedSuggestions.clear();
     aiSuggestions = [];
 }
@@ -761,12 +806,12 @@ async function importSelectedMilestones() {
 
 // Navigation
 function goBackToList() {
-    document.getElementById('projectDetailPage').style.display = 'none';
+    hideElement('projectDetailPage');
     if (currentUserRole === 'lecturer') {
-        document.getElementById('lecturerPage').style.display = 'block';
+        showElement('lecturerPage');
         loadLecturerProjects();
     } else if (currentUserRole === 'headDept') {
-        document.getElementById('headDeptPage').style.display = 'block';
+        showElement('headDeptPage');
         loadHeadDeptProjects();
     }
 }
@@ -788,6 +833,6 @@ function formatDate(dateString) {
 // Close modals when clicking outside
 window.addEventListener('click', (e) => {
     if (e.target.classList.contains('modal')) {
-        e.target.style.display = 'none';
+        hideElement(e.target);
     }
 });
