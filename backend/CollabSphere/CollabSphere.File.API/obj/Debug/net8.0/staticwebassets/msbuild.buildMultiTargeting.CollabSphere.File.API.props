@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\CollabSphere.File.API.props" />
+</Project>
