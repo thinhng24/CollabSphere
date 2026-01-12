@@ -1,0 +1,268 @@
+# ==================== CommHub Microservices - Development Services ====================
+# Chỉ chạy các services (không có infrastructure)
+#
+# CÁCH SỬ DỤNG:
+# 1. Khởi động infrastructure trước (chạy 1 lần):
+#    docker-compose -f docker-compose.infra.yml up -d
+#
+# 2. Đợi infrastructure healthy (khoảng 30-60s lần đầu):
+#    docker-compose -f docker-compose.infra.yml ps
+#
+# 3. Khởi động services (nhanh hơn nhiều):
+#    docker-compose -f docker-compose.dev.yml up -d
+#
+# HOẶC dùng script: ./scripts/dev-start.ps1
+
+services:
+  # ==================== Auth Service (Development with Hot Reload) ====================
+  auth-service:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    container_name: commhub-auth-service-dev
+    working_dir: /src/Services/AuthService
+    command: >
+      sh -c "dotnet restore && dotnet watch run --no-restore --project AuthService.csproj --urls http://+:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5001
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
+      - NUGET_XMLDOC_MODE=skip
+      - ConnectionStrings__DefaultConnection=Server=commhub-sqlserver-dev;Database=CommHub_Auth;User Id=sa;Password=CommHub@2024!;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=CommHubSuperSecretKeyForJwtAuthentication2024!MinLength32Chars
+      - JwtSettings__Issuer=CommunicationModule
+      - JwtSettings__Audience=CommunicationModuleUsers
+      - JwtSettings__ExpirationInMinutes=60
+      - JwtSettings__RefreshTokenExpirationInDays=7
+      - UseRabbitMQ=true
+      - RabbitMQ__HostName=commhub-rabbitmq-dev
+      - RabbitMQ__Port=5672
+      - RabbitMQ__UserName=guest
+      - RabbitMQ__Password=guest
+      - RabbitMQ__ExchangeName=communication_event_bus
+      - RabbitMQ__QueueName=auth_service_queue
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./Backend:/src
+      - auth-service-nuget-dev:/root/.nuget/packages
+      - nuget-cache-dev:/root/.local/share/NuGet
+    networks:
+      - commhub-network-dev
+    restart: on-failure:3
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5001/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+
+  # ==================== Chat Service (Development with Hot Reload) ====================
+  chat-service:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    container_name: commhub-chat-service-dev
+    working_dir: /src/Services/ChatService
+    command: >
+      sh -c "dotnet restore && dotnet watch run --no-restore --project ChatService.csproj --urls http://+:5002"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5002
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
+      - NUGET_XMLDOC_MODE=skip
+      - ConnectionStrings__DefaultConnection=Server=commhub-sqlserver-dev;Database=CommHub_Chat;User Id=sa;Password=CommHub@2024!;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=CommHubSuperSecretKeyForJwtAuthentication2024!MinLength32Chars
+      - JwtSettings__Issuer=CommunicationModule
+      - JwtSettings__Audience=CommunicationModuleUsers
+      - UseRabbitMQ=true
+      - RabbitMQ__HostName=commhub-rabbitmq-dev
+      - RabbitMQ__Port=5672
+      - RabbitMQ__UserName=guest
+      - RabbitMQ__Password=guest
+      - RabbitMQ__ExchangeName=communication_event_bus
+      - RabbitMQ__QueueName=chat_service_queue
+      - Redis__ConnectionString=commhub-redis-dev:6379
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./Backend:/src
+      - chat-service-nuget-dev:/root/.nuget/packages
+      - nuget-cache-dev:/root/.local/share/NuGet
+    networks:
+      - commhub-network-dev
+    restart: on-failure:3
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5002/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+
+  # ==================== Document Service (Development with Hot Reload) ====================
+  document-service:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    container_name: commhub-document-service-dev
+    working_dir: /src/Services/DocumentService
+    command: >
+      sh -c "dotnet restore && dotnet watch run --no-restore --project DocumentService.csproj --urls http://+:5003"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5003
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
+      - NUGET_XMLDOC_MODE=skip
+      - ConnectionStrings__DefaultConnection=Server=commhub-sqlserver-dev;Database=CommHub_Documents;User Id=sa;Password=CommHub@2024!;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=CommHubSuperSecretKeyForJwtAuthentication2024!MinLength32Chars
+      - JwtSettings__Issuer=CommunicationModule
+      - JwtSettings__Audience=CommunicationModuleUsers
+      - UseRabbitMQ=true
+      - RabbitMQ__HostName=commhub-rabbitmq-dev
+      - RabbitMQ__Port=5672
+      - RabbitMQ__UserName=guest
+      - RabbitMQ__Password=guest
+      - RabbitMQ__ExchangeName=communication_event_bus
+      - RabbitMQ__QueueName=document_service_queue
+      - FileStorage__UploadPath=/app/uploads
+      - FileStorage__MaxFileSizeMB=100
+    ports:
+      - "5003:5003"
+    volumes:
+      - ./Backend:/src
+      - document-service-nuget-dev:/root/.nuget/packages
+      - nuget-cache-dev:/root/.local/share/NuGet
+      - document-uploads-dev:/app/uploads
+    networks:
+      - commhub-network-dev
+    restart: on-failure:3
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5003/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+
+  # ==================== Notification Service (Development with Hot Reload) ====================
+  notification-service:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    container_name: commhub-notification-service-dev
+    working_dir: /src/Services/NotificationService
+    command: >
+      sh -c "dotnet restore && dotnet watch run --no-restore --project NotificationService.csproj --urls http://+:5004"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5004
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
+      - NUGET_XMLDOC_MODE=skip
+      - ConnectionStrings__DefaultConnection=Server=commhub-sqlserver-dev;Database=CommHub_Notifications;User Id=sa;Password=CommHub@2024!;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=CommHubSuperSecretKeyForJwtAuthentication2024!MinLength32Chars
+      - JwtSettings__Issuer=CommunicationModule
+      - JwtSettings__Audience=CommunicationModuleUsers
+      - UseRabbitMQ=true
+      - RabbitMQ__HostName=commhub-rabbitmq-dev
+      - RabbitMQ__Port=5672
+      - RabbitMQ__UserName=guest
+      - RabbitMQ__Password=guest
+      - RabbitMQ__ExchangeName=communication_event_bus
+      - RabbitMQ__QueueName=notification_service_queue
+    ports:
+      - "5004:5004"
+    volumes:
+      - ./Backend:/src
+      - notification-service-nuget-dev:/root/.nuget/packages
+      - nuget-cache-dev:/root/.local/share/NuGet
+    networks:
+      - commhub-network-dev
+    restart: on-failure:3
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5004/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+
+  # ==================== API Gateway (Development with Hot Reload) ====================
+  api-gateway:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    container_name: commhub-api-gateway-dev
+    working_dir: /src/ApiGateway
+    command: >
+      sh -c "dotnet restore && dotnet watch run --no-restore --project ApiGateway.csproj --urls http://+:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
+      - NUGET_XMLDOC_MODE=skip
+      - ReverseProxy__Clusters__auth-cluster__Destinations__auth-service__Address=http://auth-service:5001
+      - ReverseProxy__Clusters__chat-cluster__Destinations__chat-service__Address=http://chat-service:5002
+      - ReverseProxy__Clusters__document-cluster__Destinations__document-service__Address=http://document-service:5003
+      - ReverseProxy__Clusters__notification-cluster__Destinations__notification-service__Address=http://notification-service:5004
+      - JwtSettings__SecretKey=CommHubSuperSecretKeyForJwtAuthentication2024!MinLength32Chars
+      - JwtSettings__Issuer=CommunicationModule
+      - JwtSettings__Audience=CommunicationModuleUsers
+      - AllowedOrigins__0=http://localhost:3000
+      - AllowedOrigins__1=http://localhost:5173
+      - AllowedOrigins__2=http://frontend:5173
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./Backend:/src
+      - api-gateway-nuget-dev:/root/.nuget/packages
+      - nuget-cache-dev:/root/.local/share/NuGet
+    networks:
+      - commhub-network-dev
+    restart: on-failure:5
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  # ==================== Frontend React App (Development with Vite HMR) ====================
+  frontend:
+    image: node:20-alpine
+    container_name: commhub-frontend-dev
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
+    environment:
+      - VITE_API_URL=http://localhost:5000
+      - VITE_API_BASE_URL=http://localhost:5000/api
+      - VITE_SIGNALR_URL=http://localhost:5000/hubs
+      - VITE_APP_NAME=CommHub
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - "3000:5173"
+    volumes:
+      - ./Frontend:/app
+      - frontend-node-modules-dev:/app/node_modules
+    networks:
+      - commhub-network-dev
+    restart: on-failure:3
+
+# ==================== Networks ====================
+networks:
+  commhub-network-dev:
+    external: true
+    name: commhub-network-dev
+
+# ==================== Volumes ====================
+volumes:
+  # NuGet package caches - shared across services for faster restore
+  nuget-cache-dev:
+    name: commhub-nuget-cache-dev
+  api-gateway-nuget-dev:
+    name: commhub-api-gateway-nuget-dev
+  auth-service-nuget-dev:
+    name: commhub-auth-service-nuget-dev
+  chat-service-nuget-dev:
+    name: commhub-chat-service-nuget-dev
+  document-service-nuget-dev:
+    name: commhub-document-service-nuget-dev
+  notification-service-nuget-dev:
+    name: commhub-notification-service-nuget-dev
+  # Application data
+  document-uploads-dev:
+    name: commhub-document-uploads-dev
+  frontend-node-modules-dev:
+    name: commhub-frontend-node-modules-dev
