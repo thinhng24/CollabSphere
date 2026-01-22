@@ -1,0 +1,5 @@
+- [x] Delete services/AuthService/ directory
+- [x] Modify docker-compose.yml to remove unused services and databases
+- [x] Modify gateway/ocelot.json to remove auth and users routes
+- [x] Fix package references and build errors
+- [x] Create database migration

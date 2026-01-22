@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database for ProjectService
+  postgres-project:
+    image: postgres:16-alpine
+    container_name: collabsphere-postgres-project
+    environment:
+      POSTGRES_DB: projectdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres-project-data:/var/lib/postgresql/data
+    networks:
+      - collabsphere-network
+
+  # Redis for caching and pub/sub
+  redis:
+    image: redis:7-alpine
+    container_name: collabsphere-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - collabsphere-network
+
+  # RabbitMQ for message broker
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: collabsphere-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - collabsphere-network
+
+  # API Gateway (Ocelot)
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: collabsphere-gateway
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    depends_on:
+      - project-service
+    networks:
+      - collabsphere-network
+
+  # ProjectService (Member 3)
+  project-service:
+    build:
+      context: ./services/ProjectService
+      dockerfile: Dockerfile
+    container_name: collabsphere-project-service
+    ports:
+      - "5003:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres-project;Port=5432;Database=projectdb;Username=postgres;Password=postgres123
+      - Redis__ConnectionString=redis:6379
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__Username=admin
+      - RabbitMQ__Password=admin123
+      - AWS__Region=us-east-1
+      - AWS__AccessKey=${AWS_ACCESS_KEY}
+      - AWS__SecretKey=${AWS_SECRET_KEY}
+    depends_on:
+      - postgres-project
+      - redis
+      - rabbitmq
+    networks:
+      - collabsphere-network
+
+networks:
+  collabsphere-network:
+    driver: bridge
+
+volumes:
+  postgres-project-data:
+  redis-data:
+  rabbitmq-data:
