@@ -1,53 +1,51 @@
-﻿namespace CollabSphere;
+﻿using MassTransit;
+using CollabSphere.Shared.Contracts;
+
+namespace CollabSphere;
 
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
+    private readonly IBus _bus; 
 
-    public Worker(ILogger<Worker> logger)
+    public Worker(ILogger<Worker> logger, IBus bus)
     {
         _logger = logger;
+        _bus = bus;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("CollabSphere Workers đang khởi động...");
+        _logger.LogInformation("CollabSphere Test Publisher đang khởi động...");
 
-        // Chạy đồng thời 3 luồng nhiệm vụ độc lập
-        var notificationTask = DoNotificationWork(stoppingToken);
-        var mediaTask = DoMediaWork(stoppingToken);
-        var deadlineTask = DoDeadlineWork(stoppingToken);
-
-        await Task.WhenAll(notificationTask, mediaTask, deadlineTask);
-    }
-
-    // --- NHIỆM VỤ 1: THÔNG BÁO (Chat, Email, System) ---
-    private async Task DoNotificationWork(CancellationToken ct)
-    {
-        while (!ct.IsCancellationRequested)
+        while (!stoppingToken.IsCancellationRequested)
         {
-            _logger.LogInformation("[Notification] Đang kiểm tra hàng đợi thông báo...");
-            await Task.Delay(3000, ct);
-        }
-    }
+            _logger.LogInformation("--- Đang gửi tin nhắn mẫu lên RabbitMQ ---");
 
-    // --- NHIỆM VỤ 2: XỬ LÝ MEDIA (Avatar, Tài liệu) ---
-    private async Task DoMediaWork(CancellationToken ct)
-    {
-        while (!ct.IsCancellationRequested)
-        {
-            _logger.LogInformation("[Media] Đang quét các tệp tin mới tải lên...");
-            await Task.Delay(10000, ct);
-        }
-    }
+            await _bus.Publish<INotificationEvent>(new
+            {
+                ReceiverId = "Student_01",
+                Title = "Thông báo mới",
+                Content = "Bạn có một tin nhắn mới từ Mentor",
+                Type = "Email"
+            }, stoppingToken);
 
-    // --- NHIỆM VỤ 3: DEADLINE & TIMELINE (Học tập) ---
-    private async Task DoDeadlineWork(CancellationToken ct)
-    {
-        while (!ct.IsCancellationRequested)
-        {
-            _logger.LogInformation("[Deadline] Đang kiểm tra thời hạn các Topic và bài tập...");
-            await Task.Delay(15000, ct); 
+            await _bus.Publish<IMediaProcessingEvent>(new
+            {
+                FileId = Guid.NewGuid(),
+                RawUrl = "https://cdn.collabsphere.com/avatars/u1.png",
+                ProcessType = "Thumbnail"
+            }, stoppingToken);
+
+            await _bus.Publish<IDeadlineReminderEvent>(new
+            {
+                TargetId = Guid.NewGuid(),
+                TargetName = "Đồ án kỳ 7",
+                Deadline = DateTime.Now.AddDays(3),
+                StudentEmail = "tung@fpt.edu.vn"
+            }, stoppingToken);
+
+            await Task.Delay(30000, stoppingToken);
         }
     }
 }
