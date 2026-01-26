@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: collabsphere-rabbitmq
+    ports:
+      - "5672:5672"   # Cổng để code kết nối gửi tin nhắn
+      - "15672:15672" # Cổng để bạn xem giao diện quản lý trên trình duyệt
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - collabsphere-network
+
+networks:
+  collabsphere-network:
+    driver: bridge

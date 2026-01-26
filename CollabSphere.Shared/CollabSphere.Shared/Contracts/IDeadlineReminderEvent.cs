@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CollabSphere.Shared.Contracts;
+﻿namespace CollabSphere.Shared.Contracts;
 
 public interface IDeadlineReminderEvent
 {
-    Guid TargetId { get; }    // ID của Topic hoặc Bài tập
+    Guid TargetId { get; }    
     string TargetName { get; }
-    DateTime Deadline { get; }
-    string StudentEmail { get; }
+    string Message { get; }
 }
+    

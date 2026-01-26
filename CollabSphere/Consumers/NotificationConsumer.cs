@@ -12,7 +12,9 @@ public class NotificationConsumer : IConsumer<INotificationEvent>
     {
         var msg = context.Message;
         _logger.LogInformation("[Notification] Đang gửi thông báo: {Title}", msg.Title);
-        // Code gửi Email hoặc SignalR thực tế sẽ nằm đây
+        
+
+
         await Task.CompletedTask;
     }
 }
