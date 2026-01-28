@@ -2893,11 +2893,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ADMIN\\Desktop\\123123\\ProjectManagementApp\\Backend\\Backend.csproj",
+      "projectUniqueName": "C:\\Users\\ADMIN\\Desktop\\CollabSphere\\Backend\\Backend.csproj",
       "projectName": "Backend",
-      "projectPath": "C:\\Users\\ADMIN\\Desktop\\123123\\ProjectManagementApp\\Backend\\Backend.csproj",
+      "projectPath": "C:\\Users\\ADMIN\\Desktop\\CollabSphere\\Backend\\Backend.csproj",
       "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ADMIN\\Desktop\\123123\\ProjectManagementApp\\Backend\\obj\\",
+      "outputPath": "C:\\Users\\ADMIN\\Desktop\\CollabSphere\\Backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config"
