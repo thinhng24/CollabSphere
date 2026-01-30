@@ -6,67 +6,82 @@ const ImportExcel = () => {
     const [file, setFile] = useState<File | null>(null);
     const [subjects, setSubjects] = useState<Subject[]>([]);
 
-    // Xử lý khi chọn file
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             setFile(e.target.files[0]);
         }
     };
 
-    // Xử lý import file
+    const loadSubjects = async () => {
+        try {
+            const res = await getSubjects();
+            setSubjects(res.data);
+        } catch (error) {
+            console.error("Load subjects failed:", error);
+        }
+    };
+
     const handleImport = async () => {
         if (!file) return;
 
         try {
-            // Ở đây bạn có thể parse Excel, ví dụ dùng SheetJS (xlsx) để lấy dữ liệu
-            // Giả sử bạn đã có mảng subjectData từ file
+            // Demo giả lập dữ liệu từ Excel
             const subjectData: Omit<Subject, "id">[] = [
                 {
                     name: "Introduction to Computer Science",
                     code: "CS101",
                     description: "Basic CS course"
+                },
+                {
+                    name: "Data Structures",
+                    code: "CS102",
+                    description: "Learn about data structures"
                 }
             ];
 
-            const createdSubjects: Subject[] = [];
-
             for (const s of subjectData) {
-                const res = await createSubject(s);
-                createdSubjects.push(res.data);
+                await createSubject(s);
             }
 
-            setSubjects(createdSubjects);
             alert("Import thành công!");
+            loadSubjects();
+
         } catch (error) {
             console.error("Import thất bại:", error);
             alert("Import thất bại!");
         }
     };
 
-    // Load subjects từ API
-    const loadSubjects = async () => {
-        try {
-            const res = await getSubjects();
-            setSubjects(res.data);
-        } catch (error) {
-            console.error("Lấy danh sách thất bại:", error);
-        }
-    };
-
     return (
         <div>
             <h2>Import Subjects từ Excel</h2>
+
             <input type="file" accept=".xlsx, .xls" onChange={handleFileChange} />
-            <button onClick={handleImport} disabled={!file}>
+            <button onClick={handleImport} disabled={!file} style={{ marginLeft: 10 }}>
                 Import
             </button>
-            <button onClick={loadSubjects}>Load Subjects</button>
+            <button onClick={loadSubjects} style={{ marginLeft: 10 }}>
+                Load Subjects
+            </button>
 
-            <ul>
-                {subjects.map((s) => (
-                    <li key={s.id}>{s.name}</li>
-                ))}
-            </ul>
+            <table border={1} cellPadding={8} style={{ marginTop: 20 }}>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {subjects.map((s) => (
+                        <tr key={s.id}>
+                            <td>{s.code}</td>
+                            <td>{s.name}</td>
+                            <td>{s.description}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };
