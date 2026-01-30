@@ -1,73 +1,89 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\CollabSphere\\backend\\CollabSphere\\",
+  "WorkspaceRootPath": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{09DDA717-3FD9-4B2B-ADE6-922AF67B21ED}|CollabSphere.File.API\\CollabSphere.File.API.csproj|d:\\collabsphere\\backend\\collabsphere\\collabsphere.file.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{09DDA717-3FD9-4B2B-ADE6-922AF67B21ED}|CollabSphere.File.API\\CollabSphere.File.API.csproj|solutionrelative:collabsphere.file.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\collabsphere\\backend\\collabsphere\\collabsphere.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\backend\\collabsphere\\collabsphere.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\collabsphere\\backend\\collabsphere\\collabsphere.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\collabsphere\\backend\\collabsphere\\collabsphere.api\\controllers\\classcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\controllers\\classcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\collabsphere\\backend\\collabsphere\\collabsphere.api\\models\\class.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\models\\class.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\collabsphere\\backend\\collabsphere\\collabsphere.api\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\collabsphere\\backend\\collabsphere\\collabsphere.api\\models\\classstudent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\models\\classstudent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\collabsphere\\backend\\collabsphere\\collabsphere.api\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\collabsphere\\backend\\collabsphere\\collabsphere.api\\models\\syllabus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\models\\syllabus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\collabsphere\\backend\\collabsphere\\collabsphere.api\\models\\subjectimportdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\models\\subjectimportdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\collabsphere\\backend\\collabsphere\\collabsphere.api\\models\\subject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\models\\subject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Models\\Subject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CollabSphere.File.API\\Models\\Subject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\collabsphere\\backend\\collabsphere\\collabsphere.api\\collabsphere.api.csproj.backup.tmp||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\collabsphere.api.csproj.backup.tmp||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\collabsphere\\backend\\collabsphere\\collabsphere.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\backend\\collabsphere\\collabsphere.api\\controllers\\subjectscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\collabsphere\\backend\\collabsphere\\collabsphere.api\\controllers\\subjectscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\controllers\\subjectscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{09DDA717-3FD9-4B2B-ADE6-922AF67B21ED}|CollabSphere.File.API\\CollabSphere.File.API.csproj|d:\\collabsphere\\backend\\collabsphere\\collabsphere.file.api\\controllers\\excelcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{09DDA717-3FD9-4B2B-ADE6-922AF67B21ED}|CollabSphere.File.API\\CollabSphere.File.API.csproj|solutionrelative:collabsphere.file.api\\controllers\\excelcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{09DDA717-3FD9-4B2B-ADE6-922AF67B21ED}|CollabSphere.File.API\\CollabSphere.File.API.csproj|d:\\collabsphere\\backend\\collabsphere\\collabsphere.file.api\\models\\subjectimportdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{09DDA717-3FD9-4B2B-ADE6-922AF67B21ED}|CollabSphere.File.API\\CollabSphere.File.API.csproj|solutionrelative:collabsphere.file.api\\models\\subjectimportdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{09DDA717-3FD9-4B2B-ADE6-922AF67B21ED}|CollabSphere.File.API\\CollabSphere.File.API.csproj|d:\\collabsphere\\backend\\collabsphere\\collabsphere.file.api\\services\\subjectimportservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{09DDA717-3FD9-4B2B-ADE6-922AF67B21ED}|CollabSphere.File.API\\CollabSphere.File.API.csproj|solutionrelative:collabsphere.file.api\\services\\subjectimportservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{09DDA717-3FD9-4B2B-ADE6-922AF67B21ED}|CollabSphere.File.API\\CollabSphere.File.API.csproj|d:\\collabsphere\\backend\\collabsphere\\collabsphere.file.api\\collabsphere.file.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{09DDA717-3FD9-4B2B-ADE6-922AF67B21ED}|CollabSphere.File.API\\CollabSphere.File.API.csproj|solutionrelative:collabsphere.file.api\\collabsphere.file.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{09DDA717-3FD9-4B2B-ADE6-922AF67B21ED}|CollabSphere.File.API\\CollabSphere.File.API.csproj|d:\\collabsphere\\backend\\collabsphere\\collabsphere.file.api\\models\\subject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{09DDA717-3FD9-4B2B-ADE6-922AF67B21ED}|CollabSphere.File.API\\CollabSphere.File.API.csproj|solutionrelative:collabsphere.file.api\\models\\subject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\backend\\collabsphere\\collabsphere.api\\models\\syllabus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\models\\syllabus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\backend\\collabsphere\\collabsphere.api\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\backend\\collabsphere\\collabsphere.api\\models\\subject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\models\\subject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\backend\\collabsphere\\collabsphere.api\\models\\class.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\models\\class.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\backend\\collabsphere\\collabsphere.api\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\backend\\collabsphere\\collabsphere.api\\models\\classstudent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\models\\classstudent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\backend\\collabsphere\\collabsphere.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\backend\\collabsphere\\collabsphere.api\\data\\appdbcontextfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|d:\\collabsphere\\collabsphere\\backend\\collabsphere\\collabsphere.api\\data\\appdbcontextfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8B62CC36-9B2D-48E7-BA07-ECEF516F4F83}|CollabSphere.API\\CollabSphere.API.csproj|solutionrelative:collabsphere.api\\data\\appdbcontextfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\CollabSphere.File.API.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CollabSphere.File.API\\CollabSphere.File.API.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Models\\SubjectImportDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CollabSphere.File.API\\Models\\SubjectImportDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Services\\SubjectImportService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CollabSphere.File.API\\Services\\SubjectImportService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Controllers\\ExcelController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CollabSphere.File.API\\Controllers\\ExcelController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CollabSphere.File.API\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -77,7 +93,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -85,11 +101,65 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 0,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "CollabSphere.API\\Properties\\launchSettings.json",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Properties\\launchSettings.json",
+              "RelativeToolTip": "CollabSphere.API\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAuwCkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-01-30T10:39:56.719Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "SubjectImportDto.cs",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\SubjectImportDto.cs",
+              "RelativeDocumentMoniker": "CollabSphere.API\\Models\\SubjectImportDto.cs",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\SubjectImportDto.cs",
+              "RelativeToolTip": "CollabSphere.API\\Models\\SubjectImportDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-30T10:19:01.328Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ClassController.cs",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Controllers\\ClassController.cs",
+              "RelativeDocumentMoniker": "CollabSphere.API\\Controllers\\ClassController.cs",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Controllers\\ClassController.cs",
+              "RelativeToolTip": "CollabSphere.API\\Controllers\\ClassController.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAA7wBIAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-30T10:16:08.29Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "CollabSphere.API.csproj.Backup.tmp",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\CollabSphere.API.csproj.Backup.tmp",
+              "RelativeDocumentMoniker": "CollabSphere.API\\CollabSphere.API.csproj.Backup.tmp",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\CollabSphere.API.csproj.Backup.tmp",
+              "RelativeToolTip": "CollabSphere.API\\CollabSphere.API.csproj.Backup.tmp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-01-30T09:56:35.231Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
               "Title": "CollabSphere.File.API.csproj",
-              "DocumentMoniker": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\CollabSphere.File.API.csproj",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\CollabSphere.File.API.csproj",
               "RelativeDocumentMoniker": "CollabSphere.File.API\\CollabSphere.File.API.csproj",
-              "ToolTip": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\CollabSphere.File.API.csproj",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\CollabSphere.File.API.csproj",
               "RelativeToolTip": "CollabSphere.File.API\\CollabSphere.File.API.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
@@ -97,7 +167,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 14,
               "Title": "Microsoft.Common.CurrentVersion.targets",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
               "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
@@ -107,11 +177,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 17,
               "Title": "SubjectImportDto.cs",
-              "DocumentMoniker": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Models\\SubjectImportDto.cs",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Models\\SubjectImportDto.cs",
               "RelativeDocumentMoniker": "CollabSphere.File.API\\Models\\SubjectImportDto.cs",
-              "ToolTip": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Models\\SubjectImportDto.cs",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Models\\SubjectImportDto.cs",
               "RelativeToolTip": "CollabSphere.File.API\\Models\\SubjectImportDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -119,23 +189,22 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 10,
               "Title": "Subject.cs",
-              "DocumentMoniker": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Models\\Subject.cs",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Models\\Subject.cs",
               "RelativeDocumentMoniker": "CollabSphere.File.API\\Models\\Subject.cs",
-              "ToolTip": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Models\\Subject.cs",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Models\\Subject.cs",
               "RelativeToolTip": "CollabSphere.File.API\\Models\\Subject.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-02T16:19:44.057Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 18,
               "Title": "SubjectImportService.cs",
-              "DocumentMoniker": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Services\\SubjectImportService.cs",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Services\\SubjectImportService.cs",
               "RelativeDocumentMoniker": "CollabSphere.File.API\\Services\\SubjectImportService.cs",
-              "ToolTip": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Services\\SubjectImportService.cs",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Services\\SubjectImportService.cs",
               "RelativeToolTip": "CollabSphere.File.API\\Services\\SubjectImportService.cs",
               "ViewState": "AgIAAAYAAAAAAAAAAAAswCEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -143,11 +212,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 19,
               "Title": "ExcelController.cs",
-              "DocumentMoniker": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Controllers\\ExcelController.cs",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Controllers\\ExcelController.cs",
               "RelativeDocumentMoniker": "CollabSphere.File.API\\Controllers\\ExcelController.cs",
-              "ToolTip": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Controllers\\ExcelController.cs",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Controllers\\ExcelController.cs",
               "RelativeToolTip": "CollabSphere.File.API\\Controllers\\ExcelController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -155,48 +224,48 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 20,
               "Title": "Program.cs",
-              "DocumentMoniker": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Program.cs",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Program.cs",
               "RelativeDocumentMoniker": "CollabSphere.File.API\\Program.cs",
-              "ToolTip": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Program.cs",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.File.API\\Program.cs",
               "RelativeToolTip": "CollabSphere.File.API\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-02T16:09:17.288Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-02T16:09:17.288Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 5,
               "Title": "ClassStudent.cs",
-              "DocumentMoniker": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\ClassStudent.cs",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\ClassStudent.cs",
               "RelativeDocumentMoniker": "CollabSphere.API\\Models\\ClassStudent.cs",
-              "ToolTip": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\ClassStudent.cs",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\ClassStudent.cs",
               "RelativeToolTip": "CollabSphere.API\\Models\\ClassStudent.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAYAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-01T16:26:16.655Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 3,
               "Title": "Class.cs",
-              "DocumentMoniker": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\Class.cs",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\Class.cs",
               "RelativeDocumentMoniker": "CollabSphere.API\\Models\\Class.cs",
-              "ToolTip": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\Class.cs",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\Class.cs",
               "RelativeToolTip": "CollabSphere.API\\Models\\Class.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAzwBgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-01T16:25:30.942Z"
+              "WhenOpened": "2026-01-01T16:25:30.942Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 7,
               "Title": "Syllabus.cs",
-              "DocumentMoniker": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\Syllabus.cs",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\Syllabus.cs",
               "RelativeDocumentMoniker": "CollabSphere.API\\Models\\Syllabus.cs",
-              "ToolTip": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\Syllabus.cs",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\Syllabus.cs",
               "RelativeToolTip": "CollabSphere.API\\Models\\Syllabus.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAuwAsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -204,11 +273,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 13,
               "Title": "SubjectsController.cs",
-              "DocumentMoniker": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Controllers\\SubjectsController.cs",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Controllers\\SubjectsController.cs",
               "RelativeDocumentMoniker": "CollabSphere.API\\Controllers\\SubjectsController.cs",
-              "ToolTip": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Controllers\\SubjectsController.cs",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Controllers\\SubjectsController.cs",
               "RelativeToolTip": "CollabSphere.API\\Controllers\\SubjectsController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -216,11 +285,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 15,
               "Title": "AppDbContextFactory.cs",
-              "DocumentMoniker": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Data\\AppDbContextFactory.cs",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Data\\AppDbContextFactory.cs",
               "RelativeDocumentMoniker": "CollabSphere.API\\Data\\AppDbContextFactory.cs",
-              "ToolTip": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Data\\AppDbContextFactory.cs",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Data\\AppDbContextFactory.cs",
               "RelativeToolTip": "CollabSphere.API\\Data\\AppDbContextFactory.cs",
               "ViewState": "AgIAAAkAAAAAAAAAAAA4wBoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -228,11 +297,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 6,
               "Title": "User.cs",
-              "DocumentMoniker": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\User.cs",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\User.cs",
               "RelativeDocumentMoniker": "CollabSphere.API\\Models\\User.cs",
-              "ToolTip": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\User.cs",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\User.cs",
               "RelativeToolTip": "CollabSphere.API\\Models\\User.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -240,56 +309,53 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 12,
               "Title": "Program.cs",
-              "DocumentMoniker": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Program.cs",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Program.cs",
               "RelativeDocumentMoniker": "CollabSphere.API\\Program.cs",
-              "ToolTip": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Program.cs",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Program.cs",
               "RelativeToolTip": "CollabSphere.API\\Program.cs",
               "ViewState": "AgIAABIAAAAAAAAAAAAAACcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-01T15:42:25.728Z",
+              "WhenOpened": "2026-01-01T15:42:25.728Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\appsettings.json",
+              "RelativeDocumentMoniker": "CollabSphere.API\\appsettings.json",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\appsettings.json",
+              "RelativeToolTip": "CollabSphere.API\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-01-01T15:23:02.383Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\appsettings.json",
-              "RelativeDocumentMoniker": "CollabSphere.API\\appsettings.json",
-              "ToolTip": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\appsettings.json",
-              "RelativeToolTip": "CollabSphere.API\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-01-01T15:23:02.383Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 4,
               "Title": "AppDbContext.cs",
-              "DocumentMoniker": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Data\\AppDbContext.cs",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Data\\AppDbContext.cs",
               "RelativeDocumentMoniker": "CollabSphere.API\\Data\\AppDbContext.cs",
-              "ToolTip": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Data\\AppDbContext.cs",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Data\\AppDbContext.cs",
               "RelativeToolTip": "CollabSphere.API\\Data\\AppDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAsAAAAVAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-01T15:41:48.153Z"
+              "WhenOpened": "2026-01-01T15:41:48.153Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 9,
               "Title": "Subject.cs",
-              "DocumentMoniker": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\Subject.cs",
+              "DocumentMoniker": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\Subject.cs",
               "RelativeDocumentMoniker": "CollabSphere.API\\Models\\Subject.cs",
-              "ToolTip": "D:\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\Subject.cs",
+              "ToolTip": "D:\\CollabSphere\\CollabSphere\\backend\\CollabSphere\\CollabSphere.API\\Models\\Subject.cs",
               "RelativeToolTip": "CollabSphere.API\\Models\\Subject.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-01T15:41:19.382Z"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
             }
           ]
         }

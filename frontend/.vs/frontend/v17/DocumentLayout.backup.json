@@ -94,7 +94,8 @@
               "RelativeToolTip": "src\\pages\\Dashboard.tsx",
               "ViewState": "AgIAAAQAAAAAAAAAAAAwwCAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-01-03T05:26:08.003Z"
+              "WhenOpened": "2026-01-03T05:26:08.003Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -104,7 +105,7 @@
               "RelativeDocumentMoniker": "src\\pages\\ImportExcel.tsx",
               "ToolTip": "D:\\CollabSphere\\frontend\\src\\pages\\ImportExcel.tsx",
               "RelativeToolTip": "src\\pages\\ImportExcel.tsx",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAA8AAAAAAAAAA==",
+              "ViewState": "AgIAAC4AAAAAAAAAAAAuwEIAAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
               "WhenOpened": "2026-01-03T05:22:50.587Z",
               "EditorCaption": ""
@@ -119,7 +120,8 @@
               "RelativeToolTip": "src\\pages\\Subjects.tsx",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-01-03T05:22:22.781Z"
+              "WhenOpened": "2026-01-03T05:22:22.781Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -129,7 +131,7 @@
               "RelativeDocumentMoniker": "src\\services\\api.ts",
               "ToolTip": "D:\\CollabSphere\\frontend\\src\\services\\api.ts",
               "RelativeToolTip": "src\\services\\api.ts",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
               "WhenOpened": "2026-01-03T05:21:43Z",
               "EditorCaption": ""
