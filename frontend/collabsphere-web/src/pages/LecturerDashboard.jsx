@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { projectsAPI } from '../services/api';
+import StatCard from '../components/StatCard';
 
 const statusColors = {
   Pending: 'warning',
@@ -112,10 +113,50 @@ export default function LecturerDashboard() {
     );
   }
 
+  // Calculate statistics
+  const stats = {
+    total: projects.length,
+    approved: projects.filter(p => p.status === 'Approved').length,
+    pending: projects.filter(p => p.status === 'Pending').length,
+    inProgress: projects.filter(p => p.status === 'InProgress').length
+  };
+
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    <Container maxWidth="xl" sx={{ mt: 0, mb: 4 }}>
+      {/* Statistics Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard
+            title="Total Projects"
+            value={stats.total}
+            color="#3b82f6"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard
+            title="Approved"
+            value={stats.approved}
+            color="#10b981"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard
+            title="Pending"
+            value={stats.pending}
+            color="#f59e0b"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard
+            title="In Progress"
+            value={stats.inProgress}
+            color="#8b5cf6"
+          />
+        </Grid>
+      </Grid>
+
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4">My Projects</Typography>
+        <Typography variant="h5" fontWeight={600}>My Projects</Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -125,8 +166,8 @@ export default function LecturerDashboard() {
         </Button>
       </Box>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+      {error && <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>{error}</Alert>}
+      {success && <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccess('')}>{success}</Alert>}
 
       <Grid container spacing={3}>
         {projects.map((project) => (

@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import FolderIcon from '@mui/icons-material/Folder';
-import ChecklistIcon from '@mui/icons-material/Checklist';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 import ApprovalIcon from '@mui/icons-material/Approval';
 import { useAuth } from '../context/AuthContext';
 
@@ -20,22 +21,28 @@ export default function Sidebar() {
       show: true
     },
     {
+      text: 'Subjects',
+      icon: <MenuBookIcon />,
+      path: '/subjects',
+      show: isLecturer()
+    },
+    {
       text: 'Projects',
       icon: <FolderIcon />,
-      path: '/',
+      path: '/projects',
+      show: isLecturer()
+    },
+    {
+      text: 'Import Excel',
+      icon: <UploadFileIcon />,
+      path: '/import',
       show: isLecturer()
     },
     {
       text: 'Review Projects',
       icon: <ApprovalIcon />,
-      path: '/',
+      path: '/review',
       show: isHeadDept()
-    },
-    {
-      text: 'Milestones',
-      icon: <ChecklistIcon />,
-      path: '/',
-      show: isLecturer()
     }
   ];
 

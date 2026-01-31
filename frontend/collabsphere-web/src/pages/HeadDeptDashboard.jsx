@@ -21,6 +21,7 @@ import {
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { projectsAPI } from '../services/api';
+import StatCard from '../components/StatCard';
 
 export default function HeadDeptDashboard() {
   const [projects, setProjects] = useState([]);
@@ -105,6 +106,14 @@ export default function HeadDeptDashboard() {
     return project.submittedAt && project.status === 'Pending';
   };
 
+  // Calculate statistics
+  const stats = {
+    total: projects.length,
+    submitted: projects.filter(p => p.submittedAt && p.status === 'Pending').length,
+    approved: projects.filter(p => p.status === 'Approved').length,
+    rejected: projects.filter(p => p.status === 'Denied').length
+  };
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
@@ -114,16 +123,48 @@ export default function HeadDeptDashboard() {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Typography variant="h4" gutterBottom>
+    <Container maxWidth="xl" sx={{ mt: 0, mb: 4 }}>
+      {/* Statistics Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard
+            title="Total Projects"
+            value={stats.total}
+            color="#3b82f6"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard
+            title="Awaiting Review"
+            value={stats.submitted}
+            color="#f59e0b"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard
+            title="Approved"
+            value={stats.approved}
+            color="#10b981"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard
+            title="Rejected"
+            value={stats.rejected}
+            color="#ef4444"
+          />
+        </Grid>
+      </Grid>
+
+      <Typography variant="h5" fontWeight={600} gutterBottom>
         Project Review Dashboard
       </Typography>
       <Typography variant="subtitle1" color="text.secondary" gutterBottom>
         Review and approve project submissions
       </Typography>
 
-      {error && <Alert severity="error" sx={{ mb: 2, mt: 2 }}>{error}</Alert>}
-      {success && <Alert severity="success" sx={{ mb: 2, mt: 2 }}>{success}</Alert>}
+      {error && <Alert severity="error" sx={{ mb: 2, mt: 2 }} onClose={() => setError('')}>{error}</Alert>}
+      {success && <Alert severity="success" sx={{ mb: 2, mt: 2 }} onClose={() => setSuccess('')}>{success}</Alert>}
 
       <Grid container spacing={3} sx={{ mt: 2 }}>
         {projects.map((project) => (
