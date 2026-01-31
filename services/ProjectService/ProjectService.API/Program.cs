@@ -6,6 +6,7 @@ using ProjectService.Application.Interfaces;
 using ProjectService.Application.Services;
 using ProjectService.Infrastructure.Data;
 using ProjectService.Infrastructure.Repositories;
+using ProjectService.Infrastructure.Services;
 using SharedKernel.Interfaces;
 using System.Text;
 
@@ -78,6 +79,10 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IProjectService, ProjectServiceImpl>();
 builder.Services.AddScoped<IMilestoneService, MilestoneService>();
+builder.Services.AddScoped<IAIService, BedrockAIService>();
+
+// HttpClient for AI service
+builder.Services.AddHttpClient<IAIService, BedrockAIService>();
 
 // Redis
 builder.Services.AddStackExchangeRedisCache(options =>

@@ -16,7 +16,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ProjectService.Domain\ProjectService.Domain.csproj" />
     <ProjectReference Include="..\..\..\shared\SharedKernel\SharedKernel.csproj" />
-    <ProjectReference Include="..\..\..\shared\EventBus\EventBus.csproj" />
   </ItemGroup>
 
 </Project>

@@ -112,6 +112,16 @@ public class ProjectsController : ControllerBase
             return BadRequest(result);
         return Ok(result);
     }
+
+    [HttpPost("{id}/generate-milestones")]
+    [Authorize(Roles = "Lecturer")]
+    public async Task<IActionResult> GenerateMilestones(Guid id, [FromBody] GenerateMilestonesRequest request)
+    {
+        var result = await _projectService.GenerateMilestonesAsync(id, request);
+        if (!result.IsSuccess)
+            return BadRequest(result);
+        return Ok(result);
+    }
 }
 
 public class ApprovalRequest

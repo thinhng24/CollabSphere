@@ -1,347 +1,176 @@
-# CollabSphere - Project-Based Learning Management System
+# CollabSphere - Project & Milestone Management with AI
 
-CollabSphere is a comprehensive microservices-based platform designed to support Project-Based Learning (PBL) in educational environments. It integrates communication, collaboration, and project management tools into a unified workspace.
+CollabSphere is a comprehensive project management platform designed specifically for Project-Based Learning (PBL) environments, focusing on project creation, milestone management, and AI-powered project planning.
+
+## 🎯 Core Features
+
+### Projects & Milestones Management
+- **Project Creation & Management**: Lecturers can create, update, and delete projects
+- **Approval Workflow**: Head of Department reviews and approves/rejects projects
+- **Milestone Tracking**: Create and track project milestones with deadlines
+- **AI-Powered Milestone Generation**: AWS Bedrock integration for intelligent milestone suggestions
+
+### Role-Based Access
+- **Lecturer**: Create projects, manage milestones, submit for approval
+- **Head of Department**: Approve/reject projects, review proposals
+- **Admin**: Full system access and management
 
 ## 🏗️ Architecture
 
-### Microservices Architecture
-The system follows a microservices architecture with the following services:
+### Technology Stack
 
-1. **AuthService** (Port 5001) - Authentication & User Management
-2. **AcademicService** (Port 5002) - Subjects, Syllabus & Classes
-3. **ProjectService** (Port 5003) - Projects & Milestones
-4. **TeamService** (Port 5004) - Teams, Checkpoints & Workspace
-5. **CommunicationService** (Port 5005) - Chat, Notifications & Resources
-6. **RealtimeService** (Port 5006) - Video Meetings & Whiteboard
+**Backend:**
+- ASP.NET Core 8.0 Web API
+- PostgreSQL 16 Database
+- Entity Framework Core 8.0
+- JWT Bearer Authentication
+- Redis for Caching
+- RabbitMQ for Messaging
+- **AWS Bedrock for AI Integration**
 
-### API Gateway
-- **Ocelot Gateway** (Port 5000) - Routes requests to appropriate microservices
-
-### Infrastructure
-- **PostgreSQL** - 6 separate databases (one per service)
-- **Redis** - Caching and Pub/Sub for notifications
-- **RabbitMQ** - Message broker for inter-service communication
-- **Docker** - Containerization for all services
-
-## 🚀 Technology Stack
-
-### Backend
-- **Framework**: ASP.NET Core 8.0 Web API
-- **Database**: PostgreSQL 16
-- **ORM**: Entity Framework Core 8.0
-- **Authentication**: JWT Bearer Tokens
-- **API Gateway**: Ocelot
-- **Caching**: Redis (StackExchange.Redis)
-- **Message Broker**: RabbitMQ
-- **Real-time Communication**: 
-  - SignalR (Chat)
-  - Socket.IO (Whiteboard)
-  - WebRTC (Video/Audio)
-
-### Frontend
-- **Framework**: React.js 18
-- **State Management**: React Context API
-- **Routing**: React Router v6
-- **HTTP Client**: Axios
-- **UI Library**: Material-UI / Tailwind CSS
-- **Real-time**: SignalR Client, Socket.IO Client, WebRTC
-
-### Cloud Services
-- **Hosting**: Azure (Backend), AWS (Frontend)
-- **File Storage**: Cloudinary
-- **AI**: AWS Bedrock
-- **Cache**: Upstash Redis (optional)
+**Infrastructure:**
+- Docker & Docker Compose
+- Ocelot API Gateway
+- Clean Architecture Pattern
 
 ## 📁 Project Structure
 
 ```
 CollabSphere/
-├── docker-compose.yml          # Orchestrates all services
-├── .env.example                # Environment variables template
-├── .gitignore                  # Git ignore rules
-├── TODO.md                     # Implementation progress tracker
-│
+├── docker-compose.yml          # Container orchestration
+├── .env.example                # Environment configuration
 ├── gateway/                    # API Gateway (Ocelot)
-│   ├── Gateway.csproj
 │   ├── Program.cs
-│   ├── ocelot.json            # Route configuration
-│   ├── appsettings.json
-│   └── Dockerfile
-│
+│   └── ocelot.json            # Routes configuration
 ├── shared/                     # Shared libraries
-│   ├── SharedKernel/          # Common models, interfaces
-│   │   ├── Entities/
-│   │   │   └── BaseEntity.cs
-│   │   ├── Enums/
-│   │   │   ├── UserRole.cs
-│   │   │   └── ProjectStatus.cs
-│   │   ├── Common/
-│   │   │   ├── Result.cs
-│   │   │   └── PagedResult.cs
-│   │   └── Interfaces/
-│   │       ├── IRepository.cs
-│   │       └── IUnitOfWork.cs
-│   │
+│   ├── SharedKernel/          # Common models
 │   └── EventBus/              # Event-driven communication
-│       ├── Events/
-│       │   ├── IntegrationEvent.cs
-│       │   └── UserCreatedEvent.cs
-│       └── Interfaces/
-│           ├── IEventBus.cs
-│           └── IIntegrationEventHandler.cs
-│
-├── services/                   # Microservices
-│   ├── AuthService/           # Member 1
-│   │   ├── AuthService.sln
-│   │   ├── AuthService.API/
-│   │   ├── AuthService.Application/
-│   │   ├── AuthService.Domain/
-│   │   ├── AuthService.Infrastructure/
-│   │   └── Dockerfile
-│   │
-│   ├── AcademicService/       # Member 2
-│   ├── ProjectService/        # Member 3
-│   ├── TeamService/           # Member 4
-│   ├── CommunicationService/  # Member 5
-│   └── RealtimeService/       # Member 6
-│
-└── frontend/                   # React Application
-    └── collabsphere-web/
-        ├── public/
-        ├── src/
-        │   ├── components/
-        │   ├── pages/
-        │   ├── services/
-        │   ├── hooks/
-        │   ├── context/
-        │   └── App.jsx
-        ├── package.json
-        └── Dockerfile
+└── services/
+    └── ProjectService/        # Projects & Milestones Service
+        ├── ProjectService.API/
+        ├── ProjectService.Application/
+        ├── ProjectService.Domain/
+        └── ProjectService.Infrastructure/
 ```
 
-## 👥 Team Member Responsibilities
-
-### Member 1 - AuthService (Authentication & Accounts)
-**Backend:**
-- JWT authentication with refresh tokens
-- User registration and login
-- Role-based authorization (Admin, Staff, Head Dept, Lecturer, Student)
-- User account management (CRUD)
-- Account activation/deactivation
-
-**Frontend:**
-- Login/Register pages
-- User profile page
-- Admin user management dashboard
-
-**Database Tables:**
-- Users
-- RefreshTokens
-
-### Member 2 - AcademicService (Subjects, Syllabus & Classes)
-**Backend:**
-- Subject management APIs
-- Syllabus management APIs
-- Class management APIs
-- Excel file import for bulk creation
-- Assign lecturers and students to classes
-
-**Frontend:**
-- Subject list and detail pages
-- Syllabus management UI
-- Class management dashboard
-- Staff management interface
-
-**Database Tables:**
-- Subjects
-- Syllabi
-- Classes
-- ClassMembers
-
-### Member 3 - ProjectService (Projects & Milestones)
-**Backend:**
-- Project CRUD operations
-- Project approval workflow (Pending → Approved/Denied)
-- Milestone management
-- AI integration for milestone generation (AWS Bedrock)
-- Project assignment to classes
-
-**Frontend:**
-- Lecturer: Create/manage projects
-- Head Department: Approve/deny projects
-- Project detail pages with milestones
-
-**Database Tables:**
-- Projects
-- Milestones
-- ProjectApprovals
-- ProjectAssignments
-
-### Member 4 - TeamService (Teams, Checkpoints & Workspace)
-**Backend:**
-- Team creation and management
-- Team member assignment
-- Checkpoint management
-- Workspace (Cards, Tasks, Subtasks)
-- Contribution tracking
-
-**Frontend:**
-- Team management dashboard
-- Checkpoint submission UI
-- Workspace with drag-and-drop (React DnD)
-- Sprint board
-
-**Database Tables:**
-- Teams
-- TeamMembers
-- Checkpoints
-- WorkspaceCards
-- Tasks
-- Subtasks
-
-### Member 5 - CommunicationService (Chat, Notifications & Resources)
-**Backend:**
-- SignalR Hub for real-time chat
-- Message persistence
-- Resource/file management (Cloudinary)
-- Notification system (Redis Pub/Sub)
-- Email notifications
-
-**Frontend:**
-- Real-time chat UI
-- Notification dropdown
-- File upload/download
-- Resource management
-
-**Database Tables:**
-- Messages
-- Conversations
-- Resources
-- Notifications
-
-### Member 6 - RealtimeService (Video Meetings & Whiteboard)
-**Backend:**
-- WebRTC signaling server
-- Socket.IO for whiteboard
-- Meeting scheduling
-- Screen sharing support
-
-**Frontend:**
-- Video meeting UI (WebRTC)
-- Interactive whiteboard (Socket.IO)
-- Meeting scheduler
-- Screen sharing controls
-
-**Database Tables:**
-- Meetings
-- MeetingParticipants
-- WhiteboardSessions
-- WhiteboardData
-
-## 🔧 Setup Instructions
+## 🚀 Quick Start
 
 ### Prerequisites
 - Docker Desktop
 - .NET 8.0 SDK
-- Node.js 18+
-- PostgreSQL 16 (optional, for local development)
+- PostgreSQL 16
+- AWS Account (for Bedrock AI features)
 
 ### Environment Setup
 
-1. **Clone the repository**
+1. **Clone and configure environment:**
 ```bash
 git clone <repository-url>
 cd CollabSphere
-```
-
-2. **Configure environment variables**
-```bash
 cp .env.example .env
-# Edit .env with your actual credentials
 ```
 
-3. **Build and run with Docker Compose**
+2. **Configure AWS Bedrock credentials in .env:**
+```bash
+AWS_ACCESS_KEY=your-access-key
+AWS_SECRET_KEY=your-secret-key
+```
+
+3. **Start with Docker Compose:**
 ```bash
 docker-compose up --build
 ```
 
-4. **Access the services**
+4. **Access the services:**
 - API Gateway: http://localhost:5000
-- Frontend: http://localhost:3000
-- RabbitMQ Management: http://localhost:15672 (admin/admin123)
-
-### Local Development (Without Docker)
-
-1. **Start PostgreSQL and Redis**
-```bash
-# Using Docker
-docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres123 postgres:16-alpine
-docker run -d -p 6379:6379 redis:7-alpine
-docker run -d -p 5672:5672 -p 15672:15672 rabbitmq:3-management-alpine
-```
-
-2. **Run each microservice**
-```bash
-cd services/AuthService/AuthService.API
-dotnet run
-```
-
-3. **Run frontend**
-```bash
-cd frontend/collabsphere-web
-npm install
-npm start
-```
+- ProjectService: http://localhost:5003
+- RabbitMQ Management: http://localhost:15672
 
 ## 📊 Database Schema
 
-### AuthService Database (authdb)
-```sql
-Users (Id, Email, PasswordHash, FullName, PhoneNumber, Role, IsActive, LastLoginAt, CreatedAt, UpdatedAt)
-RefreshTokens (Id, Token, UserId, ExpiresAt, IsRevoked, RevokedAt, CreatedAt)
+### Projects Table
+- Id (UUID, PK)
+- Name, Description, Objectives
+- SyllabusId, ClassId
+- Status (Pending, Approved, Denied, InProgress, Completed)
+- CreatedBy, SubmittedAt, ApprovedAt, ApprovedBy
+- RejectionReason
+- Timestamps & Soft Delete
+
+### Milestones Table
+- Id (UUID, PK)
+- ProjectId (FK)
+- Title, Description
+- DueDate, Order
+- IsCompleted, CompletedAt
+- Timestamps & Soft Delete
+
+### ProjectApprovals Table
+- Id (UUID, PK)
+- ProjectId (FK), ReviewerId
+- Status (Approved, Denied)
+- Comments, ReviewedAt
+- Timestamps
+
+## 🔌 API Endpoints
+
+### Projects API (via Gateway: `/api/projects`)
+- `GET /api/projects` - List all projects (paginated)
+- `GET /api/projects/{id}` - Get project details
+- `POST /api/projects` - Create project (Lecturer)
+- `PUT /api/projects/{id}` - Update project (Lecturer)
+- `DELETE /api/projects/{id}` - Delete project (Lecturer/Admin)
+- `POST /api/projects/{id}/submit` - Submit for approval (Lecturer)
+- `POST /api/projects/{id}/approve` - Approve project (Head Dept)
+- `POST /api/projects/{id}/reject` - Reject project (Head Dept)
+
+### Milestones API (via Gateway: `/api/milestones`)
+- `GET /api/milestones/project/{projectId}` - Get milestones by project
+- `GET /api/milestones/{id}` - Get milestone details
+- `POST /api/milestones` - Create milestone
+- `PUT /api/milestones/{id}` - Update milestone
+- `DELETE /api/milestones/{id}` - Delete milestone
+- `POST /api/milestones/{id}/complete` - Mark as completed
+
+## 🤖 AI Integration (AWS Bedrock)
+
+### Intelligent Milestone Generation
+ProjectService integrates AWS Bedrock to automatically generate project milestones based on syllabus content and project objectives.
+
+**Configuration:**
+```json
+{
+  "AWS": {
+    "Region": "us-east-1",
+    "AccessKey": "your-access-key",
+    "SecretKey": "your-secret-key"
+  }
+}
 ```
 
-### AcademicService Database (academicdb)
-```sql
-Subjects (Id, Code, Name, Description, Credits, CreatedAt, UpdatedAt)
-Syllabi (Id, SubjectId, Version, Content, Objectives, CreatedAt, UpdatedAt)
-Classes (Id, SubjectId, Code, Name, Semester, Year, LecturerId, CreatedAt, UpdatedAt)
-ClassMembers (Id, ClassId, UserId, Role, JoinedAt)
+**Usage Example:**
+```bash
+POST /api/projects/{id}/generate-milestones
+{
+  "syllabusId": "syllabus-id",
+  "numberOfMilestones": 5
+}
 ```
 
-### ProjectService Database (projectdb)
-```sql
-Projects (Id, Name, Description, Objectives, SyllabusId, Status, CreatedBy, CreatedAt, UpdatedAt)
-Milestones (Id, ProjectId, Title, Description, DueDate, Order, CreatedAt, UpdatedAt)
-ProjectApprovals (Id, ProjectId, ReviewerId, Status, Comments, ReviewedAt)
-ProjectAssignments (Id, ProjectId, ClassId, AssignedBy, AssignedAt)
-```
+The AI analyzes the syllabus and project objectives to create contextually relevant milestones with appropriate timelines and dependencies.
 
-### TeamService Database (teamdb)
-```sql
-Teams (Id, Name, ProjectId, ClassId, LeaderId, CreatedAt, UpdatedAt)
-TeamMembers (Id, TeamId, UserId, Role, ContributionPercentage, JoinedAt)
-Checkpoints (Id, TeamId, Title, Description, DueDate, Status, CreatedAt, UpdatedAt)
-WorkspaceCards (Id, TeamId, Title, Description, Status, Order, CreatedAt, UpdatedAt)
-Tasks (Id, CardId, Title, Description, AssignedTo, Status, Priority, DueDate, CreatedAt)
-Subtasks (Id, TaskId, Title, IsCompleted, CreatedAt)
-```
+## 🎓 User Workflows
 
-### CommunicationService Database (communicationdb)
-```sql
-Conversations (Id, Type, Name, CreatedAt, UpdatedAt)
-Messages (Id, ConversationId, SenderId, Content, Type, CreatedAt)
-Resources (Id, Name, Type, Url, Size, UploadedBy, EntityType, EntityId, CreatedAt)
-Notifications (Id, UserId, Type, Title, Content, IsRead, CreatedAt)
-```
+### Lecturer Workflow
+1. Create a new project with objectives
+2. Add milestones manually or use AI generation
+3. Submit project for approval
+4. Manage milestones after approval
 
-### RealtimeService Database (realtimedb)
-```sql
-Meetings (Id, Title, Description, ScheduledAt, Duration, HostId, TeamId, Status, CreatedAt)
-MeetingParticipants (Id, MeetingId, UserId, JoinedAt, LeftAt)
-WhiteboardSessions (Id, MeetingId, CreatedBy, CreatedAt)
-WhiteboardData (Id, SessionId, Type, Data, CreatedAt)
-```
+### Head of Department Workflow
+1. Review pending projects
+2. Approve or reject with comments
+3. Monitor project progress across department
 
 ## 🔐 Authentication & Authorization
 
@@ -350,146 +179,180 @@ WhiteboardData (Id, SessionId, Type, Data, CreatedAt)
 {
   "sub": "user-id",
   "email": "user@example.com",
-  "role": "Lecturer",
+  "role": "Lecturer|HeadDepartment|Admin",
   "exp": 1234567890
 }
 ```
 
-### Role Hierarchy
-1. **Admin** - Full system access
-2. **Staff** - Manage subjects, classes, accounts
-3. **HeadDepartment** - Approve projects, assign to classes
-4. **Lecturer** - Create projects, manage teams
-5. **Student** - Participate in teams, submit work
+### Role Permissions
 
-## 📝 API Endpoints
+| Action | Lecturer | Head Dept | Admin |
+|--------|----------|-----------|-------|
+| Create Project | ✅ | ❌ | ✅ |
+| Submit Project | ✅ | ❌ | ✅ |
+| Approve Project | ❌ | ✅ | ✅ |
+| Reject Project | ❌ | ✅ | ✅ |
+| Manage Milestones | ✅ | ❌ | ✅ |
 
-### AuthService (via Gateway: /api/auth, /api/users)
-- POST /api/auth/register - Register new user
-- POST /api/auth/login - Login
-- POST /api/auth/refresh - Refresh token
-- POST /api/auth/logout - Logout
-- GET /api/users - Get all users (Admin)
-- GET /api/users/{id} - Get user by ID
-- PUT /api/users/{id} - Update user
-- DELETE /api/users/{id} - Deactivate user (Admin)
+## 📝 Example Requests
 
-### AcademicService (via Gateway: /api/subjects, /api/syllabus, /api/classes)
-- GET /api/subjects - List subjects
-- POST /api/subjects - Create subject
-- POST /api/subjects/import - Import from Excel
-- GET /api/syllabus - List syllabi
-- POST /api/syllabus - Create syllabus
-- GET /api/classes - List classes
-- POST /api/classes - Create class
-- POST /api/classes/{id}/members - Add members
-
-### ProjectService (via Gateway: /api/projects, /api/milestones)
-- GET /api/projects - List projects
-- POST /api/projects - Create project
-- POST /api/projects/{id}/submit - Submit for approval
-- POST /api/projects/{id}/approve - Approve project (Head Dept)
-- POST /api/projects/{id}/deny - Deny project (Head Dept)
-- GET /api/milestones - List milestones
-- POST /api/milestones - Create milestone
-
-### TeamService (via Gateway: /api/teams, /api/checkpoints, /api/workspace)
-- GET /api/teams - List teams
-- POST /api/teams - Create team
-- POST /api/teams/{id}/members - Add members
-- GET /api/checkpoints - List checkpoints
-- POST /api/checkpoints - Create checkpoint
-- GET /api/workspace/{teamId} - Get workspace
-- POST /api/workspace/cards - Create card
-
-### CommunicationService (via Gateway: /api/chat, /api/notifications, /api/resources)
-- GET /api/chat/conversations - List conversations
-- POST /api/chat/messages - Send message
-- GET /api/notifications - Get notifications
-- PUT /api/notifications/{id}/read - Mark as read
-- POST /api/resources/upload - Upload file
-- GET /api/resources - List resources
-
-### RealtimeService (via Gateway: /api/meetings, /api/whiteboard)
-- GET /api/meetings - List meetings
-- POST /api/meetings - Schedule meeting
-- POST /api/meetings/{id}/join - Join meeting
-- GET /api/whiteboard/{sessionId} - Get whiteboard data
-- POST /api/whiteboard - Create whiteboard session
-
-## 🧪 Testing
-
-### Unit Tests
+### Create Project (Lecturer)
 ```bash
-cd services/AuthService
-dotnet test
+curl -X POST http://localhost:5000/api/projects \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "E-Commerce Platform",
+    "description": "Build a full-stack e-commerce platform",
+    "objectives": "Learn React, Node.js, MongoDB, Payment Integration",
+    "syllabusId": "00000000-0000-0000-0000-000000000001",
+    "classId": "00000000-0000-0000-0000-000000000002"
+  }'
 ```
 
-### Integration Tests
+### Approve Project (Head Department)
 ```bash
-docker-compose -f docker-compose.test.yml up
+curl -X POST http://localhost:5000/api/projects/{id}/approve \
+  -H "Authorization: Bearer HEAD_DEPT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "comments": "Excellent project proposal. Approved!"
+  }'
 ```
 
-### E2E Tests (Frontend)
+### Generate Milestones with AI
 ```bash
-cd frontend/collabsphere-web
-npm run test:e2e
+curl -X POST http://localhost:5000/api/projects/{id}/generate-milestones \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "syllabusId": "syllabus-id",
+    "numberOfMilestones": 5
+  }'
 ```
 
-## 📦 Deployment
+## 🐳 Docker Deployment
 
-### Docker Deployment
+### Development
+```bash
+docker-compose up --build
+```
+
+### Production
 ```bash
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
-### Azure Deployment (Backend)
-```bash
-az login
-az acr build --registry collabsphere --image authservice:latest ./services/AuthService
-az container create --resource-group collabsphere-rg --name authservice --image collabsphere.azurecr.io/authservice:latest
-```
+## 🧪 Testing
 
-### AWS Deployment (Frontend)
-```bash
-cd frontend/collabsphere-web
-npm run build
-aws s3 sync build/ s3://collabsphere-frontend
-aws cloudfront create-invalidation --distribution-id XXX --paths "/*"
+### Manual Testing with Swagger
+Access Swagger UI at:
+- ProjectService: http://localhost:5003
+
+### Test Project Approval Workflow
+1. Create project as Lecturer
+2. Submit for approval
+3. Approve as Head Department
+4. Add milestones
+5. Track progress
+
+## 🔧 Configuration
+
+### Environment Variables
+```env
+# Database
+POSTGRES_DB=projectdb
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres123
+
+# JWT
+JWT_SECRET=YourSuperSecretKeyForJWTTokenGeneration123456789
+JWT_ISSUER=CollabSphere
+JWT_AUDIENCE=CollabSphereUsers
+
+# Redis
+REDIS_CONNECTION=redis:6379
+
+# RabbitMQ
+RABBITMQ_HOST=rabbitmq
+RABBITMQ_USER=admin
+RABBITMQ_PASSWORD=admin123
+
+# AWS Bedrock
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY=your-access-key
+AWS_SECRET_KEY=your-secret-key
 ```
 
 ## 📚 Documentation
 
-- [API Documentation](./docs/api.md) - Swagger/OpenAPI specs
-- [Architecture Diagram](./docs/architecture.md) - System design
-- [Database Schema](./docs/database.md) - ER diagrams
-- [User Manual](./docs/user-manual.md) - End-user guide
-- [Developer Guide](./docs/developer-guide.md) - Setup and contribution
+For detailed implementation information, see:
+- [ProjectService README](./services/ProjectService/README.md) - Service overview
+- [Implementation Complete](./services/ProjectService/IMPLEMENTATION_COMPLETE.md) - Full implementation details
 
-## 🤝 Contributing
+## 🔮 Future Enhancements
 
-1. Create a feature branch
-2. Make your changes
-3. Write tests
-4. Submit a pull request
+### AI Features (AWS Bedrock)
+- ✅ Project structure ready for AI integration
+- ⏳ Milestone auto-generation from syllabus
+- ⏳ Project timeline optimization
+- ⏳ Risk analysis and recommendations
+- ⏳ Progress prediction and insights
+
+### Additional Features
+- Project templates
+- Milestone dependencies and critical path
+- Progress analytics dashboard
+- Automated notifications
+- File attachments and resources
+
+## 🐛 Troubleshooting
+
+### Database Connection Issues
+```bash
+# Check PostgreSQL container
+docker ps | grep postgres-project
+
+# Restart database
+docker restart collabsphere-postgres-project
+```
+
+### AWS Bedrock Connection
+```bash
+# Verify credentials
+aws bedrock list-foundation-models --region us-east-1
+
+# Test connection
+aws bedrock invoke-model --model-id amazon.titan-text-express-v1 --region us-east-1
+```
+
+### Port Conflicts
+```bash
+# Windows
+netstat -ano | findstr :5003
+taskkill /PID <PID> /F
+
+# Linux/Mac
+lsof -i :5003
+kill -9 <PID>
+```
+
+## 📞 Support
+
+For issues and questions:
+- Check service logs: `docker logs collabsphere-project-service`
+- Review [ProjectService Documentation](./services/ProjectService/README.md)
+- Verify environment configuration in `.env`
 
 ## 📄 License
 
 This project is licensed under the MIT License.
 
-## 👨‍💻 Team
-
-- **Member 1**: Authentication & Accounts
-- **Member 2**: Academic Management
-- **Member 3**: Project Management
-- **Member 4**: Team & Workspace
-- **Member 5**: Communication
-- **Member 6**: Real-time Features
-
-## 📞 Support
-
-For issues and questions, please create an issue in the repository.
-
 ---
 
-**CollabSphere** - Empowering Project-Based Learning 🚀
+**CollabSphere** - Empowering Project-Based Learning with AI 🚀
+
+**Focus Areas:**
+- ✅ Projects & Milestones Management
+- ✅ Lecturer/Head Department UI & Workflows
+- ✅ AI Bedrock Integration (AWS)

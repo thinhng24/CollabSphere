@@ -7,7 +7,6 @@ WORKDIR /src
 
 # Copy shared projects
 COPY ["shared/SharedKernel/SharedKernel.csproj", "shared/SharedKernel/"]
-COPY ["shared/EventBus/EventBus.csproj", "shared/EventBus/"]
 
 # Copy ProjectService projects
 COPY ["services/ProjectService/ProjectService.API/ProjectService.API.csproj", "services/ProjectService/ProjectService.API/"]

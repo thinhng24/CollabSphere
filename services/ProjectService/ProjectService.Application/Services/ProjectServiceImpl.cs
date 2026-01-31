@@ -12,13 +12,19 @@ public class ProjectServiceImpl : IProjectService
 {
     private readonly IRepository<Project> _projectRepository;
     private readonly IRepository<ProjectApproval> _approvalRepository;
+    private readonly IRepository<Milestone> _milestoneRepository;
+    private readonly IAIService _aiService;
 
     public ProjectServiceImpl(
         IRepository<Project> projectRepository,
-        IRepository<ProjectApproval> approvalRepository)
+        IRepository<ProjectApproval> approvalRepository,
+        IRepository<Milestone> milestoneRepository,
+        IAIService aiService)
     {
         _projectRepository = projectRepository;
         _approvalRepository = approvalRepository;
+        _milestoneRepository = milestoneRepository;
+        _aiService = aiService;
     }
 
     public async Task<Result<PagedResult<ProjectDto>>> GetAllProjectsAsync(int pageNumber, int pageSize)
@@ -257,5 +263,65 @@ public class ProjectServiceImpl : IProjectService
         await _approvalRepository.AddAsync(approval);
 
         return Result.Success();
+    }
+
+    public async Task<Result<List<MilestoneDto>>> GenerateMilestonesAsync(
+        Guid projectId,
+        GenerateMilestonesRequest request)
+    {
+        var project = await _projectRepository.GetByIdAsync(projectId);
+        if (project == null)
+            return Result<List<MilestoneDto>>.Failure("Project not found");
+
+        // TODO: Fetch syllabus content if syllabusId is provided
+        string? syllabusContent = null;
+        if (!string.IsNullOrEmpty(request.SyllabusId))
+        {
+            // In production, fetch from AcademicService
+            syllabusContent = "Sample syllabus content for context";
+        }
+
+        var generatedMilestones = await _aiService.GenerateMilestonesAsync(
+            project.Name,
+            project.Description,
+            project.Objectives,
+            syllabusContent,
+            request.NumberOfMilestones);
+
+        if (!generatedMilestones.IsSuccess)
+            return Result<List<MilestoneDto>>.Failure(generatedMilestones.ErrorMessage!);
+
+        var milestoneDtos = new List<MilestoneDto>();
+        var baseDate = DateTime.UtcNow;
+
+        foreach (var generated in generatedMilestones.Data!)
+        {
+            var milestone = new Milestone
+            {
+                ProjectId = projectId,
+                Title = generated.Title,
+                Description = generated.Description,
+                Order = generated.Order,
+                DueDate = baseDate.AddDays(generated.EstimatedDurationDays * generated.Order),
+                IsCompleted = false
+            };
+
+            await _milestoneRepository.AddAsync(milestone);
+
+            milestoneDtos.Add(new MilestoneDto
+            {
+                Id = milestone.Id,
+                ProjectId = milestone.ProjectId,
+                Title = milestone.Title,
+                Description = milestone.Description,
+                DueDate = milestone.DueDate,
+                Order = milestone.Order,
+                IsCompleted = milestone.IsCompleted
+            });
+
+            baseDate = milestone.DueDate;
+        }
+
+        return Result<List<MilestoneDto>>.Success(milestoneDtos);
     }
 }

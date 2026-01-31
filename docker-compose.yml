@@ -84,6 +84,21 @@ services:
     networks:
       - collabsphere-network
 
+  # Frontend React Application
+  frontend:
+    build:
+      context: ./frontend/collabsphere-web
+      dockerfile: Dockerfile
+    container_name: collabsphere-frontend
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    depends_on:
+      - gateway
+    networks:
+      - collabsphere-network
+
 networks:
   collabsphere-network:
     driver: bridge

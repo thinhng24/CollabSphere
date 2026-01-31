@@ -13,4 +13,5 @@ public interface IProjectService
     Task<Result> SubmitForApprovalAsync(Guid id);
     Task<Result> ApproveProjectAsync(Guid id, Guid reviewerId, string? comments);
     Task<Result> RejectProjectAsync(Guid id, Guid reviewerId, string reason);
+    Task<Result<List<MilestoneDto>>> GenerateMilestonesAsync(Guid projectId, GenerateMilestonesRequest request);
 }
