@@ -11,7 +11,7 @@ export default function DashboardLayout({ children, title = 'Dashboard' }) {
       <Box sx={{ flex: 1, marginLeft: '280px' }}>
         <Header title={title} />
 
-        <Box sx={{ p: 4 }}>
+        <Box sx={{ p: 3 }}>
           {children}
         </Box>
       </Box>
