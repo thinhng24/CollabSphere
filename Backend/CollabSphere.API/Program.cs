@@ -1,12 +1,70 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models; 
 using CollabSphere.API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.WebHost.UseUrls("http://localhost:5001");
+
 // Add services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "CollabSphere API",
+        Version = "v1.0.0",
+        Description = "API for CollabSphere - Real-time Collaboration Platform",
+        Contact = new OpenApiContact
+        {
+            Name = "CollabSphere Team",
+            Email = "support@collabsphere.edu.vn",
+            Url = new Uri("https://collabsphere.edu.vn")
+        },
+        License = new OpenApiLicense
+        {
+            Name = "MIT License",
+            Url = new Uri("https://opensource.org/licenses/MIT")
+        }
+    });
+    
+    
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
+    
+    
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -17,24 +75,35 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
-    c.RoutePrefix = "api-docs"; // 👈 QUAN TRỌNG
-});
-
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "CollabSphere API v1");
+        c.RoutePrefix = "api-docs"; 
+        c.DocumentTitle = "CollabSphere API Documentation";
+        c.DefaultModelsExpandDepth(-1); // Ẩn schema mặc định
+        c.DisplayRequestDuration(); // Hiển thị thời gian request
+        c.EnableDeepLinking(); // Cho phép deep linking
+        c.EnableTryItOutByDefault(); // Mở try it out mặc định
+    });
 }
 
-app.UseStaticFiles(); 
+app.UseStaticFiles();
 
-// Thêm CORS nếu cần
 app.UseCors(builder => builder
-    .AllowAnyOrigin()
+    .WithOrigins(
+        "http://localhost:3000",
+        "https://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:5001"  
+    )
     .AllowAnyMethod()
-    .AllowAnyHeader());
+    .AllowAnyHeader()
+    .AllowCredentials());
 
 app.UseRouting();
 
+// Thêm endpoint riêng để test Swagger
+app.MapGet("/api-docs/test", () => "Swagger test endpoint - API docs should be available at /api-docs");
 
 // Endpoint gốc với giao diện Dashboard
 app.MapGet("/", async (HttpContext context) =>
@@ -161,16 +230,16 @@ app.MapGet("/", async (HttpContext context) =>
                             </div>
                             <div class='d-flex gap-3 align-items-center'>
                                 <span class='status-badge status-running'>
-                                    <i class='fas fa-circle me-2'></i>RUNNING
+                                    <i class='fas fa-circle me-2'></i>RUNNING ON PORT 5001
                                 </span>
                                 <div class='dropdown'>
                                     <button class='btn btn-custom dropdown-toggle' type='button' data-bs-toggle='dropdown'>
                                         <i class='fas fa-cog me-2'></i>Settings
                                     </button>
                                     <ul class='dropdown-menu dropdown-menu-dark'>
-                                        <li><a class='dropdown-item' href='/api-docs' target='_blank'><i class='fas fa-book me-2'></i>API Documentation</a></li>
-                                        <li><a class='dropdown-item' href='/health'><i class='fas fa-heartbeat me-2'></i>Health Check</a></li>
-                                        <li><a class='dropdown-item' href='http://localhost:5001' target='_blank'><i class='fas fa-broadcast-tower me-2'></i>Signaling Server</a></li>
+                                        <li><a class='dropdown-item' href='http://localhost:5001/api-docs' target='_blank'><i class='fas fa-book me-2'></i>API Documentation</a></li>
+                                        <li><a class='dropdown-item' href='http://localhost:5001/health'><i class='fas fa-heartbeat me-2'></i>Health Check</a></li>
+                                        <li><a class='dropdown-item' href='http://localhost:5001/api-docs/test'><i class='fas fa-vial me-2'></i>Test Swagger</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -233,7 +302,10 @@ app.MapGet("/", async (HttpContext context) =>
                             <h4><i class='fas fa-history me-2'></i>Recent Activity</h4>
                             <div id='activityLogs' class='mt-3'>
                                 <div class='log-entry'>
-                                    <i class='fas fa-server me-2'></i>System started at {{DateTime.Now.ToString("HH:mm:ss")}}
+                                    <i class='fas fa-server me-2'></i>System started on port 5001 at {{DateTime.Now.ToString("HH:mm:ss")}}
+                                </div>
+                                <div class='log-entry'>
+                                    <i class='fas fa-book me-2'></i>API Documentation available at <a href='http://localhost:5001/api-docs' target='_blank' class='text-success'>/api-docs</a>
                                 </div>
                             </div>
                         </div>
@@ -246,19 +318,15 @@ app.MapGet("/", async (HttpContext context) =>
                             <div class='mt-3'>
                                 <div class='d-flex justify-content-between align-items-center mb-3'>
                                     <span>Main API Server</span>
-                                    <span class='status-badge status-healthy'>Healthy</span>
+                                    <span class='status-badge status-healthy'>Port 5001</span>
                                 </div>
                                 <div class='d-flex justify-content-between align-items-center mb-3'>
-                                    <span>Signaling Server</span>
-                                    <span class='status-badge status-healthy' id='signalingStatus'>Checking...</span>
+                                    <span>Swagger UI</span>
+                                    <span id='swaggerStatus' class='status-badge'>Checking...</span>
                                 </div>
                                 <div class='d-flex justify-content-between align-items-center mb-3'>
-                                    <span>Database</span>
-                                    <span class='status-badge status-healthy'>Connected</span>
-                                </div>
-                                <div class='d-flex justify-content-between align-items-center'>
-                                    <span>Redis Cache</span>
-                                    <span class='status-badge status-healthy' id='redisStatus'>Checking...</span>
+                                    <span>API Health</span>
+                                    <span id='apiHealthStatus' class='status-badge'>Checking...</span>
                                 </div>
                             </div>
                         </div>
@@ -268,18 +336,23 @@ app.MapGet("/", async (HttpContext context) =>
                             <div class='mt-3'>
                                 <div class='api-endpoint'>
                                     <small>GET</small>
-                                    <div>/api/Meeting</div>
-                                    <small class='text-muted'>Get all meetings</small>
-                                </div>
-                                <div class='api-endpoint'>
-                                    <small>POST</small>
-                                    <div>/api/Meeting</div>
-                                    <small class='text-muted'>Create new meeting</small>
+                                    <div><a href='http://localhost:5001/api-docs' class='text-white text-decoration-none'>/api-docs</a></div>
+                                    <small class='text-muted'>Interactive API documentation</small>
                                 </div>
                                 <div class='api-endpoint'>
                                     <small>GET</small>
-                                    <div>/health</div>
+                                    <div><a href='http://localhost:5001/swagger/v1/swagger.json' class='text-white text-decoration-none'>/swagger/v1/swagger.json</a></div>
+                                    <small class='text-muted'>OpenAPI specification</small>
+                                </div>
+                                <div class='api-endpoint'>
+                                    <small>GET</small>
+                                    <div><a href='http://localhost:5001/health' class='text-white text-decoration-none'>/health</a></div>
                                     <small class='text-muted'>System health check</small>
+                                </div>
+                                <div class='api-endpoint'>
+                                    <small>GET</small>
+                                    <div><a href='http://localhost:5001/api/Meeting' class='text-white text-decoration-none'>/api/Meeting</a></div>
+                                    <small class='text-muted'>Get all meetings</small>
                                 </div>
                             </div>
                         </div>
@@ -287,14 +360,14 @@ app.MapGet("/", async (HttpContext context) =>
                         <div class='dashboard-card'>
                             <h4><i class='fas fa-rocket me-2'></i>Quick Actions</h4>
                             <div class='mt-3 d-grid gap-2'>
-                                <a href='/api-docs' target='_blank' class='btn btn-custom'>
+                                <a href='http://localhost:5001/api-docs' target='_blank' class='btn btn-custom'>
                                     <i class='fas fa-book me-2'></i>Open API Docs
                                 </a>
-                                <button onclick='testAllServices()' class='btn btn-outline-light'>
-                                    <i class='fas fa-play-circle me-2'></i>Test All Services
+                                <button onclick='testSwagger()' class='btn btn-outline-success'>
+                                    <i class='fas fa-vial me-2'></i>Test Swagger
                                 </button>
-                                <button onclick='clearLogs()' class='btn btn-outline-warning'>
-                                    <i class='fas fa-trash me-2'></i>Clear Logs
+                                <button onclick='checkAPIHealth()' class='btn btn-outline-info'>
+                                    <i class='fas fa-heartbeat me-2'></i>Check API Health
                                 </button>
                             </div>
                         </div>
@@ -304,7 +377,7 @@ app.MapGet("/", async (HttpContext context) =>
                 <!-- Footer -->
                 <div class='row mt-4'>
                     <div class='col-12 text-center text-muted'>
-                        <p>CollabSphere Backend v1.0.0 | © 2024 | <i class='fas fa-heart text-danger'></i> Powered by ASP.NET Core</p>
+                        <p>CollabSphere Backend v1.0.0 | © 2024 | Running on localhost:5001 | <i class='fas fa-heart text-danger'></i> Powered by ASP.NET Core</p>
                     </div>
                 </div>
             </div>
@@ -364,7 +437,61 @@ app.MapGet("/", async (HttpContext context) =>
                     }
                 });
 
-                // Update stats
+                // Kiểm tra Swagger status
+                async function checkSwaggerStatus() {
+                    try {
+                        const response = await fetch('/swagger/v1/swagger.json');
+                        if (response.ok) {
+                            document.getElementById('swaggerStatus').textContent = 'Available';
+                            document.getElementById('swaggerStatus').className = 'status-badge status-healthy';
+                            return true;
+                        }
+                    } catch (error) {
+                        console.error('Swagger check failed:', error);
+                    }
+                    
+                    document.getElementById('swaggerStatus').textContent = 'Not Available';
+                    document.getElementById('swaggerStatus').className = 'status-badge status-running';
+                    return false;
+                }
+
+                // Kiểm tra API health
+                async function checkAPIHealth() {
+                    try {
+                        const response = await fetch('/health');
+                        if (response.ok) {
+                            const data = await response.json();
+                            document.getElementById('apiHealthStatus').textContent = data.status;
+                            document.getElementById('apiHealthStatus').className = 'status-badge status-healthy';
+                            addLog('API health check: ' + data.status);
+                            return true;
+                        }
+                    } catch (error) {
+                        console.error('Health check failed:', error);
+                    }
+                    
+                    document.getElementById('apiHealthStatus').textContent = 'Unhealthy';
+                    document.getElementById('apiHealthStatus').className = 'status-badge status-running';
+                    addLog('API health check failed');
+                    return false;
+                }
+
+                // Test Swagger
+                async function testSwagger() {
+                    addLog('Testing Swagger documentation...');
+                    const swaggerOk = await checkSwaggerStatus();
+                    const healthOk = await checkAPIHealth();
+                    
+                    if (swaggerOk && healthOk) {
+                        addLog('✅ Swagger documentation is working correctly');
+                        alert('Swagger is working correctly! You can access it at http://localhost:5001/api-docs');
+                    } else {
+                        addLog('❌ Swagger documentation test failed');
+                        alert('There might be an issue with Swagger. Check the console for details.');
+                    }
+                }
+
+                // Update stats - using relative URLs
                 async function updateStats() {
                     try {
                         const response = await fetch('/api/Meeting');
@@ -380,63 +507,23 @@ app.MapGet("/", async (HttpContext context) =>
                     }
                 }
 
-                // Check services
-                async function checkServices() {
-                    // Check Redis
-                    try {
-                        const redisRes = await fetch('/health');
-                        if (redisRes.ok) {
-                            document.getElementById('redisStatus').textContent = 'Connected';
-                            document.getElementById('redisStatus').className = 'status-badge status-healthy';
-                        }
-                    } catch (e) {
-                        document.getElementById('redisStatus').textContent = 'Disconnected';
-                        document.getElementById('redisStatus').className = 'status-badge status-running';
-                    }
-
-                    // Check Signaling Server
-                    try {
-                        const signalRes = await fetch('http://localhost:5001/health');
-                        if (signalRes.ok) {
-                            document.getElementById('signalingStatus').textContent = 'Healthy';
-                            document.getElementById('signalingStatus').className = 'status-badge status-healthy';
-                        }
-                    } catch (e) {
-                        document.getElementById('signalingStatus').textContent = 'Unreachable';
-                        document.getElementById('signalingStatus').className = 'status-badge status-running';
-                    }
-                }
-
-                // Test all services
-                async function testAllServices() {
-                    addLog('Testing all services...');
-                    await checkServices();
-                    await updateStats();
-                    addLog('Service test completed');
-                }
-
                 // Add log entry
                 function addLog(message) {
                     const logs = document.getElementById('activityLogs');
                     const logEntry = document.createElement('div');
                     logEntry.className = 'log-entry';
-                    logEntry.innerHTML = `<i class='fas fa-info-circle me-2'></i>\${message} <small class='text-muted float-end'>\${new Date().toLocaleTimeString()}</small>`;
+                    logEntry.innerHTML = `<i class='fas fa-info-circle me-2'></i>${message} <small class='text-muted float-end'>${new Date().toLocaleTimeString()}</small>`;
                     logs.prepend(logEntry);
                 }
 
-                // Clear logs
-                function clearLogs() {
-                    const logs = document.getElementById('activityLogs');
-                    logs.innerHTML = `<div class="log-entry"><i class="fas fa-server me-2"></i>Logs cleared at \${new Date().toLocaleTimeString()}</div>`;
-                }
-
                 // Initialize
+                checkSwaggerStatus();
+                checkAPIHealth();
                 updateStats();
-                checkServices();
                 
                 // Auto-update every 30 seconds
                 setInterval(updateStats, 30000);
-                setInterval(checkServices, 60000);
+                setInterval(checkSwaggerStatus, 60000);
 
                 // Simulate random activity
                 setInterval(() => {
@@ -459,7 +546,7 @@ app.MapGet("/", async (HttpContext context) =>
     await context.Response.WriteAsync(html);
 });
 
-// Health check endpoint
+// Health check endpoint - enhanced with Swagger info
 app.MapGet("/health", () =>
 {
     return Results.Json(new
@@ -469,7 +556,10 @@ app.MapGet("/health", () =>
         version = "1.0.0",
         timestamp = DateTime.UtcNow,
         uptime = Environment.TickCount / 1000,
-        environment = app.Environment.EnvironmentName
+        environment = app.Environment.EnvironmentName,
+        url = "http://localhost:5001",
+        apiDocumentation = "http://localhost:5001/api-docs",
+        openApiSpec = "http://localhost:5001/swagger/v1/swagger.json"
     });
 });
 

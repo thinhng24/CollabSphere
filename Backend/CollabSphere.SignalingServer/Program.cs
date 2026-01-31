@@ -1,8 +1,9 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging; 
-using Microsoft.Extensions.Caching.Distributed; 
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,18 +23,20 @@ builder.Services.AddCors(options =>
     });
 });
 
-
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<ConnectionManager>();
+builder.Services.AddSingleton<StatsTracker>(); // Thêm service để theo dõi thống kê
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration["Redis:ConnectionString"] ?? "localhost:6379";
 });
 
+// Thêm memory cache cho stats nhanh
+builder.Services.AddMemoryCache();
+
 var app = builder.Build();
 
 app.UseCors("AllowReact");
-
 app.UseRouting();
 
 app.MapHub<WebRTCHub>("/webrtc-hub");
@@ -98,10 +101,6 @@ app.MapGet("/", async (HttpContext context) =>
                 }
                 .status-healthy {
                     background: linear-gradient(45deg, #4776E6, #8E54E9);
-                    color: white;
-                }
-                .status-warning {
-                    background: linear-gradient(45deg, #f46b45, #eea849);
                     color: white;
                 }
                 .stat-number {
@@ -260,8 +259,8 @@ app.MapGet("/", async (HttpContext context) =>
                                 </div>
                                 <div class='service-status'>
                                     <div>
-                                        <i class='fas fa-heartbeat me-2 text-danger'></i>
-                                        <span>Health Monitor</span>
+                                        <i class='fas fa-chart-line me-2 text-danger'></i>
+                                        <span>Stats Tracker</span>
                                     </div>
                                     <span class='status-badge status-running'>Monitoring</span>
                                 </div>
@@ -289,11 +288,11 @@ app.MapGet("/", async (HttpContext context) =>
                                 <button onclick='testSignalRConnection()' class='btn btn-gradient'>
                                     <i class='fas fa-play me-2'></i>Test SignalR Connection
                                 </button>
-                                <button onclick='checkHealth()' class='btn btn-outline-light'>
-                                    <i class='fas fa-heartbeat me-2'></i>Health Check
+                                <button onclick='refreshRealStats()' class='btn btn-outline-light'>
+                                    <i class='fas fa-sync-alt me-2'></i>Refresh Stats
                                 </button>
-                                <a href='http://localhost:5000' target='_blank' class='btn btn-outline-info'>
-                                    <i class='fas fa-external-link-alt me-2'></i>Go to Main API
+                                <a href='/api/stats' target='_blank' class='btn btn-outline-info'>
+                                    <i class='fas fa-code me-2'></i>View Stats API
                                 </a>
                                 <button onclick='clearLogs()' class='btn btn-outline-warning'>
                                     <i class='fas fa-trash me-2'></i>Clear Logs
@@ -312,13 +311,13 @@ app.MapGet("/", async (HttpContext context) =>
                                 </div>
                                 <div class='endpoint-item'>
                                     <small class='text-primary'>GET</small>
-                                    <div>/health</div>
-                                    <small class='text-muted'>Health check</small>
+                                    <div>/api/stats</div>
+                                    <small class='text-muted'>Real-time statistics</small>
                                 </div>
                                 <div class='endpoint-item'>
-                                    <small class='text-info'>POST</small>
-                                    <div>/webrtc-hub/negotiate</div>
-                                    <small class='text-muted'>SignalR negotiation</small>
+                                    <small class='text-info'>GET</small>
+                                    <div>/health</div>
+                                    <small class='text-muted'>Health check</small>
                                 </div>
                             </div>
                         </div>
@@ -366,8 +365,7 @@ app.MapGet("/", async (HttpContext context) =>
             <script>
                 // Initialize variables
                 let startTime = Date.now();
-                let connectionCount = 0;
-                let meetingCount = 0;
+                let signalRConnection = null;
 
                 // Update server time
                 function updateServerTime() {
@@ -384,19 +382,37 @@ app.MapGet("/", async (HttpContext context) =>
                         `${hours}h ${minutes}m ${seconds}s`;
                 }
 
-                // Update stats
-                function updateStats() {
-                    // Simulate random data (in real app, fetch from server)
-                    connectionCount = Math.max(0, connectionCount + Math.floor(Math.random() * 3) - 1);
-                    meetingCount = Math.max(0, meetingCount + Math.floor(Math.random() * 2) - 1);
-                    
-                    document.getElementById('activeConnections').textContent = connectionCount;
-                    document.getElementById('activeMeetings').textContent = meetingCount;
-                    document.getElementById('messagesSec').textContent = Math.floor(Math.random() * 50) + 10;
-                    document.getElementById('memoryUsage').textContent = (Math.random() * 100 + 50).toFixed(0) + 'MB';
-                    
-                    document.getElementById('refreshTime').textContent = 
-                        'Last updated: ' + new Date().toLocaleTimeString();
+                // Update stats từ server thực tế
+                async function updateRealStats() {
+                    try {
+                        const response = await fetch('/api/stats');
+                        if (response.ok) {
+                            const data = await response.json();
+                            
+                            document.getElementById('activeConnections').textContent = data.activeConnections;
+                            document.getElementById('activeMeetings').textContent = data.activeMeetings;
+                            document.getElementById('messagesSec').textContent = data.messagesPerSecond.toFixed(1);
+                            document.getElementById('memoryUsage').textContent = data.memoryUsage.toFixed(0) + 'MB';
+                            
+                            document.getElementById('refreshTime').textContent = 
+                                'Last updated: ' + new Date().toLocaleTimeString();
+                            
+                            // Log activity nếu có thay đổi
+                            if (data.lastActivity) {
+                                addLog(data.lastActivity);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Failed to fetch stats:', error);
+                        addLog('Error fetching stats: ' + error.message);
+                    }
+                }
+
+                // Function để refresh thủ công
+                async function refreshRealStats() {
+                    addLog('Manual refresh requested...');
+                    await updateRealStats();
+                    showAlert('success', 'Stats refreshed successfully');
                 }
 
                 // Test SignalR connection
@@ -425,8 +441,9 @@ app.MapGet("/", async (HttpContext context) =>
                     try {
                         const response = await fetch('/health');
                         if (response.ok) {
-                            addLog('✓ Health check passed');
-                            showAlert('success', 'Server is healthy!');
+                            const data = await response.json();
+                            addLog('✓ Health check passed - Status: ' + data.status);
+                            showAlert('success', 'Server is healthy! Uptime: ' + data.uptime + 's');
                         } else {
                             addLog('✗ Health check failed');
                             showAlert('warning', 'Health check failed');
@@ -488,32 +505,40 @@ app.MapGet("/", async (HttpContext context) =>
                     }, 5000);
                 }
 
-                // Simulate random activity
-                function simulateActivity() {
-                    if (Math.random() > 0.7) {
-                        const activities = [
-                            'New WebSocket connection established',
-                            'User joined meeting room',
-                            'Signaling message processed',
-                            'Connection pool updated',
-                            'Heartbeat check completed'
-                        ];
-                        addLog(activities[Math.floor(Math.random() * activities.length)]);
+                // Initialize SignalR connection để nhận real-time updates
+                async function initializeSignalR() {
+                    try {
+                        signalRConnection = new signalR.HubConnectionBuilder()
+                            .withUrl("/webrtc-hub")
+                            .withAutomaticReconnect()
+                            .build();
+
+                        // Listen for stats updates
+                        signalRConnection.on("StatsUpdated", (stats) => {
+                            addLog(`Real-time update: ${stats.message}`);
+                            updateRealStats();
+                        });
+
+                        await signalRConnection.start();
+                        addLog('SignalR connected for real-time updates');
+                    } catch (err) {
+                        console.error('SignalR Connection Error: ', err);
+                        addLog('SignalR connection failed: ' + err.message);
                     }
                 }
 
                 // Initialize
                 updateServerTime();
-                updateStats();
+                updateRealStats(); // Lấy dữ liệu thực ngay từ đầu
+                initializeSignalR();
                 
-                // Auto-update every 5 seconds
+                // Auto-update
                 setInterval(updateServerTime, 1000);
-                setInterval(updateStats, 5000);
-                setInterval(simulateActivity, 10000);
+                setInterval(updateRealStats, 3000); // Cập nhật mỗi 3 giây
                 
                 // Add initial logs
-                setTimeout(() => addLog('Dashboard initialized successfully'), 1000);
-                setTimeout(() => addLog('SignalR Hub ready for connections'), 2000);
+                setTimeout(() => addLog('Dashboard initialized successfully'), 500);
+                setTimeout(() => addLog('Fetching real-time statistics...'), 1000);
             </script>
         </body>
         </html>
@@ -534,25 +559,76 @@ app.MapGet("/health", () =>
         timestamp = DateTime.UtcNow,
         uptime = Environment.TickCount / 1000,
         environment = app.Environment.EnvironmentName,
-        hubEndpoint = "/webrtc-hub",
-        port = 5001
+        hubEndpoint = "/webrtc-hub"
     });
 });
 
-// Thêm endpoint để lấy server stats
-app.MapGet("/api/stats", () =>
+// API endpoint để lấy server stats thực tế
+app.MapGet("/api/stats", (ConnectionManager connectionManager, StatsTracker statsTracker) =>
 {
     return Results.Json(new
     {
-        activeConnections = 0,
-        activeMeetings = 0,
+        activeConnections = connectionManager.GetActiveConnectionsCount(),
+        activeMeetings = connectionManager.GetActiveMeetingsCount(),
+        messagesPerSecond = statsTracker.GetMessagesPerSecond(),
+        totalMessages = statsTracker.TotalMessages,
+        memoryUsage = Process.GetCurrentProcess().WorkingSet64 / 1024 / 1024, // MB
         serverTime = DateTime.UtcNow,
-        memoryUsage = GC.GetTotalMemory(false) / 1024 / 1024,
-        totalRequests = 0
+        lastActivity = statsTracker.GetLastActivity(),
+        meetingDetails = connectionManager.GetMeetingParticipantsCount(),
+        cpuTime = Process.GetCurrentProcess().TotalProcessorTime.TotalSeconds
     });
 });
 
-app.Run();
+// API để reset stats (cho testing)
+app.MapPost("/api/stats/reset", (StatsTracker statsTracker) =>
+{
+    statsTracker.Reset();
+    return Results.Ok("Statistics reset successfully");
+});
+// Endpoint để tạo test data
+app.MapPost("/api/test/simulate", async (ConnectionManager connectionManager, StatsTracker statsTracker) =>
+{
+    // Simulate some activity
+    var testMeetingId = $"test-meeting-{Guid.NewGuid().ToString()[..8]}";
+    var testUserId = $"user-{Guid.NewGuid().ToString()[..8]}";
+    
+    // Simulate connections
+    for (int i = 0; i < 5; i++)
+    {
+        var connId = $"test-conn-{i}";
+        connectionManager.AddConnection(testMeetingId, $"{testUserId}-{i}", connId);
+        statsTracker.IncrementMessages();
+        statsTracker.RecordActivity($"Test connection {i} added");
+    }
+    
+    return Results.Json(new
+    {
+        message = "Test data created",
+        meetingId = testMeetingId,
+        connections = 5
+    });
+});
+
+// Endpoint để gửi test messages
+app.MapPost("/api/test/messages", (StatsTracker statsTracker) =>
+{
+    var random = new Random();
+    var count = random.Next(10, 50);
+    
+    for (int i = 0; i < count; i++)
+    {
+        statsTracker.IncrementMessages();
+    }
+    
+    statsTracker.RecordActivity($"Added {count} test messages");
+    
+    return Results.Json(new
+    {
+        message = $"Added {count} test messages",
+        totalMessages = statsTracker.TotalMessages
+    });
+});
 
 app.Run();
 
@@ -560,15 +636,19 @@ public class WebRTCHub : Hub
 {
     private readonly ConnectionManager _connectionManager;
     private readonly ILogger<WebRTCHub> _logger;
+    private readonly StatsTracker _statsTracker;
 
-    public WebRTCHub(ConnectionManager connectionManager, ILogger<WebRTCHub> logger)
+    public WebRTCHub(ConnectionManager connectionManager, ILogger<WebRTCHub> logger, StatsTracker statsTracker)
     {
         _connectionManager = connectionManager;
         _logger = logger;
+        _statsTracker = statsTracker;
     }
 
     public async Task JoinMeeting(string meetingId, string userId, string userName)
     {
+        _statsTracker.IncrementMessages(); // Theo dõi message
+        
         await Groups.AddToGroupAsync(Context.ConnectionId, meetingId);
         _connectionManager.AddConnection(meetingId, userId, Context.ConnectionId);
         
@@ -579,11 +659,18 @@ public class WebRTCHub : Hub
             ConnectionId = Context.ConnectionId
         });
         
+        // Gửi thông báo real-time về dashboard
+        await Clients.All.SendAsync("StatsUpdated", new { 
+            message = $"User {userName} joined meeting {meetingId}" 
+        });
+        
         _logger.LogInformation($"User {userName} joined meeting {meetingId}");
     }
 
     public async Task LeaveMeeting(string meetingId, string userId)
     {
+        _statsTracker.IncrementMessages();
+        
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, meetingId);
         _connectionManager.RemoveConnection(meetingId, userId);
         
@@ -591,10 +678,16 @@ public class WebRTCHub : Hub
         {
             UserId = userId
         });
+        
+        await Clients.All.SendAsync("StatsUpdated", new { 
+            message = $"User {userId} left meeting {meetingId}" 
+        });
     }
 
     public async Task SendOffer(string meetingId, string targetUserId, object offer)
     {
+        _statsTracker.IncrementMessages();
+        
         var targetConnection = _connectionManager.GetConnectionId(meetingId, targetUserId);
         if (targetConnection != null)
         {
@@ -608,6 +701,8 @@ public class WebRTCHub : Hub
 
     public async Task SendAnswer(string meetingId, string targetUserId, object answer)
     {
+        _statsTracker.IncrementMessages();
+        
         var targetConnection = _connectionManager.GetConnectionId(meetingId, targetUserId);
         if (targetConnection != null)
         {
@@ -621,6 +716,8 @@ public class WebRTCHub : Hub
 
     public async Task SendIceCandidate(string meetingId, string targetUserId, object candidate)
     {
+        _statsTracker.IncrementMessages();
+        
         var targetConnection = _connectionManager.GetConnectionId(meetingId, targetUserId);
         if (targetConnection != null)
         {
@@ -632,8 +729,22 @@ public class WebRTCHub : Hub
         }
     }
 
+    public override async Task OnConnectedAsync()
+    {
+        _statsTracker.IncrementMessages();
+        _statsTracker.RecordActivity("New connection established");
+        
+        await base.OnConnectedAsync();
+        await Clients.All.SendAsync("StatsUpdated", new { 
+            message = $"New connection: {Context.ConnectionId}" 
+        });
+    }
+
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
+        _statsTracker.IncrementMessages();
+        _statsTracker.RecordActivity("Connection disconnected");
+        
         var connections = _connectionManager.GetConnectionsByConnectionId(Context.ConnectionId);
         foreach (var connection in connections)
         {
@@ -644,6 +755,11 @@ public class WebRTCHub : Hub
         }
         
         _connectionManager.RemoveConnection(Context.ConnectionId);
+        
+        await Clients.All.SendAsync("StatsUpdated", new { 
+            message = $"Connection disconnected: {Context.ConnectionId}" 
+        });
+        
         await base.OnDisconnectedAsync(exception);
     }
 }
@@ -720,6 +836,34 @@ public class ConnectionManager
             _userConnections.Remove(connectionId);
         }
     }
+
+    // Thêm các phương thức để lấy thống kê thực tế
+    public int GetActiveConnectionsCount()
+    {
+        lock (_userConnections)
+        {
+            return _userConnections.Count;
+        }
+    }
+
+    public int GetActiveMeetingsCount()
+    {
+        lock (_meetingConnections)
+        {
+            return _meetingConnections.Count;
+        }
+    }
+
+    public Dictionary<string, int> GetMeetingParticipantsCount()
+    {
+        lock (_meetingConnections)
+        {
+            return _meetingConnections.ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value.Count
+            );
+        }
+    }
 }
 
 public class MeetingConnection
@@ -727,3 +871,61 @@ public class MeetingConnection
     public string MeetingId { get; set; } = string.Empty;
     public string UserId { get; set; } = string.Empty;
 }
+
+// Class mới để theo dõi thống kê thực tế
+public class StatsTracker
+{
+    private long _totalMessages = 0;
+    private DateTime _startTime = DateTime.UtcNow;
+    private readonly List<string> _recentActivities = new();
+    private readonly object _lock = new object();
+
+    public long TotalMessages => _totalMessages;
+
+    public void IncrementMessages()
+    {
+        Interlocked.Increment(ref _totalMessages);
+    }
+
+    public double GetMessagesPerSecond()
+    {
+        var elapsedSeconds = (DateTime.UtcNow - _startTime).TotalSeconds;
+        if (elapsedSeconds < 1) return 0;
+        
+        lock (_lock)
+        {
+            return _totalMessages / elapsedSeconds;
+        }
+    }
+
+    public void RecordActivity(string activity)
+    {
+        lock (_lock)
+        {
+            _recentActivities.Add($"{DateTime.UtcNow:HH:mm:ss} - {activity}");
+            // Giữ tối đa 50 activities gần nhất
+            if (_recentActivities.Count > 50)
+            {
+                _recentActivities.RemoveAt(0);
+            }
+        }
+    }
+
+    public string GetLastActivity()
+    {
+        lock (_lock)
+        {
+            return _recentActivities.LastOrDefault() ?? "No recent activity";
+        }
+    }
+
+    public void Reset()
+    {
+        lock (_lock)
+        {
+            _totalMessages = 0;
+            _startTime = DateTime.UtcNow;
+            _recentActivities.Clear();
+        }
+    }
+}   

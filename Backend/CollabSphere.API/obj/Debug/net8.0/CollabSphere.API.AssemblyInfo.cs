@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CollabSphere.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+55d0b20c493996c3883ca20b0855eb1a6167324b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+463e12d893eafde50f2b9b55616c37db504a6f5a")]
 [assembly: System.Reflection.AssemblyProductAttribute("CollabSphere.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CollabSphere.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
