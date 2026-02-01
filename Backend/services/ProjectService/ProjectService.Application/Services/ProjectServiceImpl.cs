@@ -289,7 +289,7 @@ public class ProjectServiceImpl : IProjectService
             request.NumberOfMilestones);
 
         if (!generatedMilestones.IsSuccess)
-            return Result<List<MilestoneDto>>.Failure(generatedMilestones.ErrorMessage!);
+            return Result<List<MilestoneDto>>.Failure(generatedMilestones.Message);
 
         var milestoneDtos = new List<MilestoneDto>();
         var baseDate = DateTime.UtcNow;
