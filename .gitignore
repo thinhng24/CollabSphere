@@ -1,0 +1,4 @@
+Backend/obj/
+Backend/bin/
+**/obj/
+**/bin/
