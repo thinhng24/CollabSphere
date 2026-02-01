@@ -141,8 +141,12 @@ const ProjectsPage: React.FC = () => {
       setError('');
       setSuccess('Generating milestones with AI...');
       await projectsAPI.generateMilestones(project.id);
-      setSuccess('Milestones generated successfully!');
+      setSuccess('Milestones generated successfully! Opening milestones...');
       loadProjects();
+      // Auto open milestones dialog to show generated milestones
+      setTimeout(() => {
+        handleOpenMilestones(project);
+      }, 500);
     } catch {
       setError('Failed to generate milestones');
     }

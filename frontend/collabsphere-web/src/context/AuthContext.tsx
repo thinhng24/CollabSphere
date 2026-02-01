@@ -21,7 +21,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Check for stored user on mount
     const storedUser = localStorage.getItem('user');
     const token = localStorage.getItem('token');
 
@@ -46,15 +45,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
   };
 
-  const isLecturer = (): boolean => user?.role === 'Lecturer';
+  const isAdmin = (): boolean => user?.role === 'Admin';
+  const isStaff = (): boolean => user?.role === 'Staff';
   const isHeadDept = (): boolean => user?.role === 'HeadDepartment';
+  const isLecturer = (): boolean => user?.role === 'Lecturer';
+  const isStudent = (): boolean => user?.role === 'Student';
 
   const value: AuthContextType = {
     user,
     login,
     logout,
-    isLecturer,
+    isAdmin,
+    isStaff,
     isHeadDept,
+    isLecturer,
+    isStudent,
     loading
   };
 
