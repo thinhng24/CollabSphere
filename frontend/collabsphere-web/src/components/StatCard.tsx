@@ -1,7 +1,8 @@
 import React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
+import { StatCardProps } from '../types';
 
-export default function StatCard({ title, value, icon, color = '#1976d2' }) {
+const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color = '#1976d2' }) => {
   return (
     <Card
       sx={{
@@ -39,4 +40,6 @@ export default function StatCard({ title, value, icon, color = '#1976d2' }) {
       </CardContent>
     </Card>
   );
-}
+};
+
+export default StatCard;

@@ -2,8 +2,9 @@ import React from 'react';
 import { Box } from '@mui/material';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import { DashboardLayoutProps } from '../types';
 
-export default function DashboardLayout({ children, title = 'Dashboard' }) {
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title = 'Dashboard' }) => {
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f5f7fa' }}>
       <Sidebar />
@@ -17,4 +18,6 @@ export default function DashboardLayout({ children, title = 'Dashboard' }) {
       </Box>
     </Box>
   );
-}
+};
+
+export default DashboardLayout;

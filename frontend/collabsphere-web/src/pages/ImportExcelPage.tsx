@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import {
   Container,
   Typography,
@@ -12,12 +12,12 @@ import {
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 
-export default function ImportExcelPage() {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [message, setMessage] = useState('');
+const ImportExcelPage: React.FC = () => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [message, setMessage] = useState<string>('');
 
-  const handleFileSelect = (event) => {
-    const file = event.target.files[0];
+  const handleFileSelect = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
       setMessage(`Selected: ${file.name}`);
@@ -108,4 +108,6 @@ export default function ImportExcelPage() {
       </Paper>
     </Container>
   );
-}
+};
+
+export default ImportExcelPage;
