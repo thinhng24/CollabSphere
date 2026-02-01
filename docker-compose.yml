@@ -45,7 +45,7 @@ services:
   # API Gateway (Ocelot)
   gateway:
     build:
-      context: ./gateway
+      context: ./Backend/gateway
       dockerfile: Dockerfile
     container_name: collabsphere-gateway
     ports:
@@ -61,8 +61,8 @@ services:
   # ProjectService (Member 3)
   project-service:
     build:
-      context: ./services/ProjectService
-      dockerfile: Dockerfile
+      context: ./Backend
+      dockerfile: services/ProjectService/Dockerfile
     container_name: collabsphere-project-service
     ports:
       - "5003:8080"
