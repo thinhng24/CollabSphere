@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Typography, IconButton, Avatar, Menu, MenuItem } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { HeaderProps } from '../types';
 
-export default function Header({ title }) {
+const Header: React.FC<HeaderProps> = ({ title }) => {
   const { user, logout } = useAuth();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleMenu = (event) => {
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -72,4 +73,6 @@ export default function Header({ title }) {
       </Box>
     </Box>
   );
-}
+};
+
+export default Header;

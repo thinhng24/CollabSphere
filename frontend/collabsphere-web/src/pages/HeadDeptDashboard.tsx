@@ -22,16 +22,20 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { projectsAPI } from '../services/api';
 import StatCard from '../components/StatCard';
+import { Project, ProjectStatus } from '../types';
 
-export default function HeadDeptDashboard() {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [dialogType, setDialogType] = useState('approve');
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [comments, setComments] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+type DialogType = 'approve' | 'reject';
+type ChipColor = 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
+
+const HeadDeptDashboard: React.FC = () => {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [dialogType, setDialogType] = useState<DialogType>('approve');
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [comments, setComments] = useState<string>('');
+  const [error, setError] = useState<string>('');
+  const [success, setSuccess] = useState<string>('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,25 +46,26 @@ export default function HeadDeptDashboard() {
     try {
       setLoading(true);
       const response = await projectsAPI.getAll(1, 50);
-      const allProjects = response.data.data || response.data;
+      const data = response.data.data;
+      const allProjects: Project[] = data?.items || data || [];
 
       // Filter to show submitted projects first
-      const sorted = allProjects.sort((a, b) => {
+      const sorted = [...allProjects].sort((a, b) => {
         if (a.submittedAt && !b.submittedAt) return -1;
         if (!a.submittedAt && b.submittedAt) return 1;
         return 0;
       });
 
       setProjects(sorted);
-    } catch (error) {
+    } catch (err) {
       setError('Failed to load projects');
-      console.error(error);
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOpenDialog = (project, type) => {
+  const handleOpenDialog = (project: Project, type: DialogType) => {
     setSelectedProject(project);
     setDialogType(type);
     setComments('');
@@ -68,31 +73,35 @@ export default function HeadDeptDashboard() {
   };
 
   const handleApprove = async () => {
+    if (!selectedProject) return;
+
     try {
       setError('');
       await projectsAPI.approve(selectedProject.id, comments);
       setSuccess(`Project "${selectedProject.name}" approved successfully!`);
       setOpenDialog(false);
       loadProjects();
-    } catch (error) {
+    } catch {
       setError('Failed to approve project');
     }
   };
 
   const handleReject = async () => {
+    if (!selectedProject) return;
+
     try {
       setError('');
       await projectsAPI.reject(selectedProject.id, comments);
       setSuccess(`Project "${selectedProject.name}" rejected.`);
       setOpenDialog(false);
       loadProjects();
-    } catch (error) {
+    } catch {
       setError('Failed to reject project');
     }
   };
 
-  const getStatusColor = (status) => {
-    const colors = {
+  const getStatusColor = (status: ProjectStatus): ChipColor => {
+    const colors: Record<ProjectStatus, ChipColor> = {
       Pending: 'warning',
       Approved: 'success',
       Denied: 'error',
@@ -102,8 +111,8 @@ export default function HeadDeptDashboard() {
     return colors[status] || 'default';
   };
 
-  const needsReview = (project) => {
-    return project.submittedAt && project.status === 'Pending';
+  const needsReview = (project: Project): boolean => {
+    return !!project.submittedAt && project.status === 'Pending';
   };
 
   // Calculate statistics
@@ -283,4 +292,6 @@ export default function HeadDeptDashboard() {
       </Dialog>
     </Container>
   );
-}
+};
+
+export default HeadDeptDashboard;

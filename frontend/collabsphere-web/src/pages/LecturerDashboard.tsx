@@ -21,8 +21,11 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import { projectsAPI } from '../services/api';
 import StatCard from '../components/StatCard';
+import { Project, ProjectStatus, CreateProjectRequest } from '../types';
 
-const statusColors = {
+type ChipColor = 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
+
+const statusColors: Record<ProjectStatus, ChipColor> = {
   Pending: 'warning',
   Approved: 'success',
   Denied: 'error',
@@ -30,15 +33,15 @@ const statusColors = {
   Completed: 'default'
 };
 
-export default function LecturerDashboard() {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+const LecturerDashboard: React.FC = () => {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const [success, setSuccess] = useState<string>('');
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CreateProjectRequest>({
     name: '',
     description: '',
     objectives: '',
@@ -54,10 +57,11 @@ export default function LecturerDashboard() {
     try {
       setLoading(true);
       const response = await projectsAPI.getAll();
-      setProjects(response.data.data || response.data);
-    } catch (error) {
+      const data = response.data.data;
+      setProjects(data?.items || data || []);
+    } catch (err) {
       setError('Failed to load projects');
-      console.error(error);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -77,30 +81,31 @@ export default function LecturerDashboard() {
         classId: ''
       });
       loadProjects();
-    } catch (error) {
-      setError(error.response?.data?.message || 'Failed to create project');
+    } catch (err: unknown) {
+      const axiosError = err as { response?: { data?: { message?: string } } };
+      setError(axiosError.response?.data?.message || 'Failed to create project');
     }
   };
 
-  const handleSubmit = async (projectId) => {
+  const handleSubmit = async (projectId: string) => {
     try {
       setError('');
       await projectsAPI.submit(projectId);
       setSuccess('Project submitted for approval!');
       loadProjects();
-    } catch (error) {
+    } catch {
       setError('Failed to submit project');
     }
   };
 
-  const handleDelete = async (projectId) => {
+  const handleDelete = async (projectId: string) => {
     if (!window.confirm('Are you sure you want to delete this project?')) return;
 
     try {
       await projectsAPI.delete(projectId);
       setSuccess('Project deleted successfully!');
       loadProjects();
-    } catch (error) {
+    } catch {
       setError('Failed to delete project');
     }
   };
@@ -274,4 +279,6 @@ export default function LecturerDashboard() {
       </Dialog>
     </Container>
   );
-}
+};
+
+export default LecturerDashboard;

@@ -24,18 +24,21 @@ const theme = createTheme({
   },
 });
 
-function PrivateRoute({ children }) {
+interface PrivateRouteProps {
+  children: React.ReactNode;
+}
+
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  return user ? children : <Navigate to="/login" />;
-}
+  return user ? <>{children}</> : <Navigate to="/login" />;
+};
 
-
-function AppRoutes() {
+const AppRoutes: React.FC = () => {
   const { user } = useAuth();
 
   return (
@@ -108,9 +111,9 @@ function AppRoutes() {
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
-}
+};
 
-function App() {
+const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -121,6 +124,6 @@ function App() {
       </BrowserRouter>
     </ThemeProvider>
   );
-}
+};
 
 export default App;

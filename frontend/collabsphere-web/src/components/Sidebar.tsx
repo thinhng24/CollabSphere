@@ -8,12 +8,19 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import ApprovalIcon from '@mui/icons-material/Approval';
 import { useAuth } from '../context/AuthContext';
 
-export default function Sidebar() {
+interface MenuItem {
+  text: string;
+  icon: React.ReactNode;
+  path: string;
+  show: boolean;
+}
+
+const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isLecturer, isHeadDept } = useAuth();
 
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     {
       text: 'Dashboard',
       icon: <DashboardIcon />,
@@ -46,7 +53,7 @@ export default function Sidebar() {
     }
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path: string): boolean => location.pathname === path;
 
   return (
     <Box
@@ -105,4 +112,6 @@ export default function Sidebar() {
       </List>
     </Box>
   );
-}
+};
+
+export default Sidebar;

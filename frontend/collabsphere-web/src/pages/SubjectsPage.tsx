@@ -1,7 +1,7 @@
 import React from 'react';
-import { Container, Typography, Box, Paper } from '@mui/material';
+import { Container, Typography, Paper } from '@mui/material';
 
-export default function SubjectsPage() {
+const SubjectsPage: React.FC = () => {
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Typography variant="h4" fontWeight={600} gutterBottom>
@@ -17,4 +17,6 @@ export default function SubjectsPage() {
       </Paper>
     </Container>
   );
-}
+};
+
+export default SubjectsPage;

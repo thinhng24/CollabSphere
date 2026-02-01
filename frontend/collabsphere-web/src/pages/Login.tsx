@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -11,27 +11,34 @@ import {
 } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 
-export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+type DemoRole = 'lecturer' | 'head';
+
+interface DemoAccount {
+  email: string;
+  password: string;
+}
+
+const Login: React.FC = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string>('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
 
-    const result = await login(email, password);
-    if (result.success) {
+    try {
+      await login(email, password);
       navigate('/');
-    } else {
-      setError(result.error);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed');
     }
   };
 
-  const handleDemoLogin = (role) => {
-    const demoAccounts = {
+  const handleDemoLogin = (role: DemoRole) => {
+    const demoAccounts: Record<DemoRole, DemoAccount> = {
       lecturer: { email: 'lecturer@collabsphere.com', password: 'demo123' },
       head: { email: 'head@collabsphere.com', password: 'demo123' }
     };
@@ -112,4 +119,6 @@ export default function Login() {
       </Paper>
     </Container>
   );
-}
+};
+
+export default Login;
