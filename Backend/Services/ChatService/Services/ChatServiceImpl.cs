@@ -6,6 +6,7 @@ using ChatService.Models.DTOs;
 using ChatService.Hubs;
 using EventBus.Abstractions;
 using EventBus.Events;
+using System.Text.Json;
 
 namespace ChatService.Services;
 
@@ -19,17 +20,23 @@ public class ChatServiceImpl : IChatService
     private readonly IHubContext<ChatHub> _hubContext;
     private readonly ILogger<ChatServiceImpl> _logger;
     private readonly IEventBus _eventBus;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IConfiguration _configuration;
 
     public ChatServiceImpl(
         ChatDbContext context,
         IHubContext<ChatHub> hubContext,
         ILogger<ChatServiceImpl> logger,
-        IEventBus eventBus)
+        IEventBus eventBus,
+        IHttpClientFactory httpClientFactory,
+        IConfiguration configuration)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
+        _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
     #region Conversation Operations
@@ -845,6 +852,19 @@ public class ChatServiceImpl : IChatService
 
         if (cache == null || cache.ExpiresAt < DateTime.UtcNow)
         {
+            // Try to fetch from AuthService
+            var userFromAuth = await FetchUserFromAuthServiceAsync(userId, cancellationToken);
+            if (userFromAuth != null)
+            {
+                // Update cache
+                await UpdateUserCacheAsync(
+                    userId,
+                    userFromAuth.Username,
+                    userFromAuth.FullName,
+                    userFromAuth.AvatarUrl,
+                    cancellationToken);
+                return userFromAuth;
+            }
             return null;
         }
 
@@ -857,6 +877,79 @@ public class ChatServiceImpl : IChatService
             IsOnline = cache.IsOnline,
             LastSeen = cache.LastSeen
         };
+    }
+
+    private async Task<UserDto?> FetchUserFromAuthServiceAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var authServiceUrl = _configuration["ServiceSettings:AuthServiceUrl"] ?? "http://auth-service:5001";
+            var client = _httpClientFactory.CreateClient();
+
+            var response = await client.GetAsync(
+                $"{authServiceUrl}/api/auth/internal/users/{userId}",
+                cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Failed to fetch user {UserId} from AuthService: {StatusCode}",
+                    userId, response.StatusCode);
+                return null;
+            }
+
+            var content = await response.Content.ReadAsStringAsync(cancellationToken);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            // AuthService returns ApiResponse<UserDto>
+            var apiResponse = JsonSerializer.Deserialize<AuthServiceUserResponse>(content, options);
+
+            if (apiResponse?.Success == true && apiResponse.Data != null)
+            {
+                return new UserDto
+                {
+                    Id = apiResponse.Data.Id,
+                    Username = apiResponse.Data.Username,
+                    Email = apiResponse.Data.Email,
+                    FullName = apiResponse.Data.FullName,
+                    AvatarUrl = apiResponse.Data.AvatarUrl,
+                    IsOnline = apiResponse.Data.IsOnline,
+                    LastSeen = apiResponse.Data.LastSeen,
+                    CreatedAt = apiResponse.Data.CreatedAt
+                };
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching user {UserId} from AuthService", userId);
+            return null;
+        }
+    }
+
+    // Helper class for deserializing AuthService response
+    private class AuthServiceUserResponse
+    {
+        public bool Success { get; set; }
+        public string? Message { get; set; }
+        public AuthServiceUserData? Data { get; set; }
+    }
+
+    private class AuthServiceUserData
+    {
+        public Guid Id { get; set; }
+        public string Username { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
+        public string? AvatarUrl { get; set; }
+        public bool IsOnline { get; set; }
+        public DateTime? LastSeen { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 
     public async Task UpdateUserCacheAsync(

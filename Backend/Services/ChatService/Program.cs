@@ -109,6 +109,9 @@ else
     Log.Information("Using InMemory EventBus (for development/testing)");
 }
 
+// ==================== HttpClient ====================
+builder.Services.AddHttpClient();
+
 // ==================== SignalR ====================
 builder.Services.AddSignalR(options =>
 {
@@ -134,7 +137,12 @@ builder.Services.AddCors(options =>
 });
 
 // ==================== Controllers ====================
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.DictionaryKeyPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    });
 builder.Services.AddEndpointsApiExplorer();
 
 // ==================== Swagger ====================
