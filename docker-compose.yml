@@ -460,3 +460,4 @@ volumes:
   postgres-project-data:
   redis-data:
   rabbitmq-data:
+
