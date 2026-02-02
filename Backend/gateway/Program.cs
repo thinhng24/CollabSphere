@@ -10,9 +10,26 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 
 // Add JWT Authentication
-var jwtSecret = builder.Configuration["JwtSettings:Secret"] ?? "YourSuperSecretKeyForJWTTokenGeneration123456789";
-var jwtIssuer = builder.Configuration["JwtSettings:Issuer"] ?? "CollabSphere";
-var jwtAudience = builder.Configuration["JwtSettings:Audience"] ?? "CollabSphereUsers";
+var jwtSecret = builder.Configuration["JwtSettings:Secret"];
+if (string.IsNullOrWhiteSpace(jwtSecret))
+{
+    throw new InvalidOperationException(
+        "JWT Secret is required. Please set JwtSettings:Secret in appsettings.json or environment variable JWT_SECRET.");
+}
+
+var jwtIssuer = builder.Configuration["JwtSettings:Issuer"];
+if (string.IsNullOrWhiteSpace(jwtIssuer))
+{
+    throw new InvalidOperationException(
+        "JWT Issuer is required. Please set JwtSettings:Issuer in appsettings.json or environment variable JWT_ISSUER.");
+}
+
+var jwtAudience = builder.Configuration["JwtSettings:Audience"];
+if (string.IsNullOrWhiteSpace(jwtAudience))
+{
+    throw new InvalidOperationException(
+        "JWT Audience is required. Please set JwtSettings:Audience in appsettings.json or environment variable JWT_AUDIENCE.");
+}
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

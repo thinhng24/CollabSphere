@@ -6,9 +6,9 @@ services:
     image: postgres:16-alpine
     container_name: collabsphere-postgres-project
     environment:
-      POSTGRES_DB: projectdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres123
+      POSTGRES_DB: ${POSTGRES_DB:-projectdb}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5434:5432"
     volumes:
@@ -32,8 +32,8 @@ services:
     image: rabbitmq:3-management-alpine
     container_name: collabsphere-rabbitmq
     environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: admin123
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -53,6 +53,9 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
+      - JwtSettings__Secret=${JWT_SECRET}
+      - JwtSettings__Issuer=${JWT_ISSUER:-CollabSphere}
+      - JwtSettings__Audience=${JWT_AUDIENCE:-CollabSphereUsers}
     depends_on:
       - project-service
     networks:
@@ -69,12 +72,15 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnection=Host=postgres-project;Port=5432;Database=projectdb;Username=postgres;Password=postgres123
+      - ConnectionStrings__DefaultConnection=Host=postgres-project;Port=5432;Database=${POSTGRES_DB:-projectdb};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD}
+      - JwtSettings__Secret=${JWT_SECRET}
+      - JwtSettings__Issuer=${JWT_ISSUER:-CollabSphere}
+      - JwtSettings__Audience=${JWT_AUDIENCE:-CollabSphereUsers}
       - Redis__ConnectionString=redis:6379
       - RabbitMQ__Host=rabbitmq
-      - RabbitMQ__Username=admin
-      - RabbitMQ__Password=admin123
-      - AWS__Region=us-east-1
+      - RabbitMQ__Username=${RABBITMQ_USER:-admin}
+      - RabbitMQ__Password=${RABBITMQ_PASSWORD}
+      - AWS__Region=${AWS_REGION:-us-east-1}
       - AWS__AccessKey=${AWS_ACCESS_KEY}
       - AWS__SecretKey=${AWS_SECRET_KEY}
     depends_on:
