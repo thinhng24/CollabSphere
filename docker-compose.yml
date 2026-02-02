@@ -1,43 +1,32 @@
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: pm-mysql
-    restart: unless-stopped
+  # PostgreSQL Database for AuthService
+  postgres-auth:
+    image: postgres:16
+    container_name: collabsphere-postgres-auth
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root123
-      MYSQL_DATABASE: projectdb
-      MYSQL_USER: app
-      MYSQL_PASSWORD: app123
+      POSTGRES_DB: authdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
     ports:
-      - "3306:3306"
+      - "5435:5432"
     volumes:
-      - pm_mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot123"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
+      - postgres-auth-data:/var/lib/postgresql/data
 
-  backend:
+  # AuthService
+  auth-service:
     build:
-      context: ./Backend
-    container_name: pm-backend
+      context: ./auth.sln
+      dockerfile: AuthService/Dockerfile
+    container_name: collabsphere-auth-service
     ports:
-      - "5000:8080"
+      - "5001:8080"
+    depends_on:
+      - postgres-auth
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-    depends_on:
-      mysql:
-        condition: service_healthy
-
-  frontend:
-    build:
-      context: ./frontend
-    container_name: pm-frontend
-    ports:
-      - "5173:5173"
-    depends_on:
-      - backend
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres-auth;Port=5432;Database=authdb;Username=postgres;Password=postgres123
 
 volumes:
-  pm_mysql_data:
+  postgres-auth-data:
