@@ -1,3 +1,331 @@
+# ==================== CommHub Microservices Docker Compose ====================
+# Full microservices deployment: API Gateway, Auth, Chat, Document, Notification Services
+# SQL Server, RabbitMQ, Redis
+
+services:
+  # ==================== SQL Server Database ====================
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: commhub-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=CommHub@2024!
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+      - ./scripts/sql:/docker-entrypoint-initdb.d
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'CommHub@2024!' -Q 'SELECT 1' -C -b || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'CommHub@2024!' -Q 'SELECT 1' -b || exit 1",
+        ]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    networks:
+      - commhub-network
+    restart: unless-stopped
+
+  # ==================== RabbitMQ Message Broker ====================
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: commhub-rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_DEFAULT_VHOST=/
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - commhub-network
+    restart: unless-stopped
+
+  # ==================== Redis Cache ====================
+  redis:
+    image: redis:7-alpine
+    container_name: commhub-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - commhub-network
+    restart: unless-stopped
+
+  # ==================== API Gateway (YARP) ====================
+  api-gateway:
+    build:
+      context: ./Backend
+      dockerfile: ApiGateway/Dockerfile
+    container_name: commhub-api-gateway
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5000
+      - ReverseProxy__Clusters__auth-cluster__Destinations__auth-service__Address=http://auth-service:5001
+      - ReverseProxy__Clusters__chat-cluster__Destinations__chat-service__Address=http://chat-service:5002
+      - ReverseProxy__Clusters__document-cluster__Destinations__document-service__Address=http://document-service:5003
+      - ReverseProxy__Clusters__notification-cluster__Destinations__notification-service__Address=http://notification-service:5004
+      - JwtSettings__SecretKey=CommHubSuperSecretKeyForJwtAuthentication2024!MinLength32Chars
+      - JwtSettings__Issuer=CommunicationModule
+      - JwtSettings__Audience=CommunicationModuleUsers
+      - AllowedOrigins__0=http://localhost:3000
+      - AllowedOrigins__1=http://localhost
+      - AllowedOrigins__2=http://frontend:80
+    ports:
+      - "5000:5000"
+    depends_on:
+      auth-service:
+        condition: service_healthy
+      chat-service:
+        condition: service_healthy
+      document-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+    networks:
+      - commhub-network
+    restart: unless-stopped
+
+  # ==================== Auth Service ====================
+  auth-service:
+    build:
+      context: ./Backend
+      dockerfile: Services/AuthService/Dockerfile
+    container_name: commhub-auth-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5001
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=CommHub_Auth;User Id=sa;Password=CommHub@2024!;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=CommHubSuperSecretKeyForJwtAuthentication2024!MinLength32Chars
+      - JwtSettings__Issuer=CommunicationModule
+      - JwtSettings__Audience=CommunicationModuleUsers
+      - JwtSettings__ExpirationInMinutes=60
+      - JwtSettings__RefreshTokenExpirationInDays=7
+      - UseRabbitMQ=true
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__Port=5672
+      - RabbitMQ__UserName=guest
+      - RabbitMQ__Password=guest
+      - RabbitMQ__ExchangeName=communication_event_bus
+      - RabbitMQ__QueueName=auth_service_queue
+    ports:
+      - "5001:5001"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - commhub-network
+    restart: unless-stopped
+
+  # ==================== Chat Service ====================
+  chat-service:
+    build:
+      context: ./Backend
+      dockerfile: Services/ChatService/Dockerfile
+    container_name: commhub-chat-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5002
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=CommHub_Chat;User Id=sa;Password=CommHub@2024!;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=CommHubSuperSecretKeyForJwtAuthentication2024!MinLength32Chars
+      - JwtSettings__Issuer=CommunicationModule
+      - JwtSettings__Audience=CommunicationModuleUsers
+      - UseRabbitMQ=true
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__Port=5672
+      - RabbitMQ__UserName=guest
+      - RabbitMQ__Password=guest
+      - RabbitMQ__ExchangeName=communication_event_bus
+      - RabbitMQ__QueueName=chat_service_queue
+      - Redis__ConnectionString=redis:6379
+    ports:
+      - "5002:5002"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - commhub-network
+    restart: unless-stopped
+
+  # ==================== Document Service ====================
+  document-service:
+    build:
+      context: ./Backend
+      dockerfile: Services/DocumentService/Dockerfile
+    container_name: commhub-document-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5003
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=CommHub_Documents;User Id=sa;Password=CommHub@2024!;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=CommHubSuperSecretKeyForJwtAuthentication2024!MinLength32Chars
+      - JwtSettings__Issuer=CommunicationModule
+      - JwtSettings__Audience=CommunicationModuleUsers
+      - UseRabbitMQ=true
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__Port=5672
+      - RabbitMQ__UserName=guest
+      - RabbitMQ__Password=guest
+      - RabbitMQ__ExchangeName=communication_event_bus
+      - RabbitMQ__QueueName=document_service_queue
+      - FileStorage__UploadPath=/app/uploads
+      - FileStorage__MaxFileSizeMB=100
+    ports:
+      - "5003:5003"
+    volumes:
+      - document-uploads:/app/uploads
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - commhub-network
+    restart: unless-stopped
+
+  # ==================== Notification Service ====================
+  notification-service:
+    build:
+      context: ./Backend
+      dockerfile: Services/NotificationService/Dockerfile
+    container_name: commhub-notification-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5004
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=CommHub_Notifications;User Id=sa;Password=CommHub@2024!;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=CommHubSuperSecretKeyForJwtAuthentication2024!MinLength32Chars
+      - JwtSettings__Issuer=CommunicationModule
+      - JwtSettings__Audience=CommunicationModuleUsers
+      - UseRabbitMQ=true
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__Port=5672
+      - RabbitMQ__UserName=guest
+      - RabbitMQ__Password=guest
+      - RabbitMQ__ExchangeName=communication_event_bus
+      - RabbitMQ__QueueName=notification_service_queue
+    ports:
+      - "5004:5004"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - commhub-network
+    restart: unless-stopped
+
+  # ==================== Frontend React App ====================
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:5000
+        - VITE_API_BASE_URL=http://localhost:5000/api
+        - VITE_SIGNALR_URL=http://localhost:5000/hubs
+    container_name: commhub-frontend
+    environment:
+      - VITE_API_URL=http://localhost:5000
+      - VITE_API_BASE_URL=http://localhost:5000/api
+      - VITE_SIGNALR_URL=http://localhost:5000/hubs
+      - VITE_APP_NAME=CommHub
+      - BACKEND_HOST=api-gateway:5000
+    ports:
+      - "3000:80"
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:80/",
+          "||",
+          "exit",
+          "1",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - commhub-network
+    restart: unless-stopped
+
+# ==================== Networks ====================
+networks:
+  commhub-network:
+    driver: bridge
+    name: commhub-microservices-network
+
+# ==================== Volumes ====================
+volumes:
+  sqlserver-data:
+    name: commhub-ms-sqlserver-data
+  rabbitmq-data:
+    name: commhub-ms-rabbitmq-data
+  redis-data:
+    name: commhub-ms-redis-data
+  document-uploads:
+    name: commhub-ms-document-uploads
 
 services:
   auth-api:

@@ -1,6 +1,10 @@
 {
   "ExpandedNodes": [
     "",
+    "\\backend",
+    "\\backend\\CollabSphere"
+  ],
+  "SelectedNode": "\\backend\\CollabSphere\\CollabSphere.API",
     "\\auth.sln",
     "\\frontend",
     "\\frontend\\public",
