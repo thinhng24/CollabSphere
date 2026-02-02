@@ -1,7 +1,10 @@
 version: '3.8'
 
+# ==================== CollabSphere + CommHub Integrated Microservices ====================
+# Combines ProjectService, AuthService with Chat, Document, Notification Services
+
 services:
-  # PostgreSQL Database for ProjectService
+  # ==================== PostgreSQL for ProjectService ====================
   postgres-project:
     image: postgres:16-alpine
     container_name: collabsphere-postgres-project
@@ -16,7 +19,7 @@ services:
     networks:
       - collabsphere-network
 
-  # PostgreSQL Database for AuthService
+  # ==================== PostgreSQL for AuthService (CollabSphere) ====================
   postgres-auth:
     image: postgres:16-alpine
     container_name: collabsphere-postgres-auth
@@ -32,7 +35,30 @@ services:
     networks:
       - collabsphere-network
 
-  # Redis for caching and pub/sub
+  # ==================== SQL Server for CommHub Services ====================
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: collabsphere-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=CommHub@2024!
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+      - ./scripts/sql:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'CommHub@2024!' -Q 'SELECT 1' -C -b || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'CommHub@2024!' -Q 'SELECT 1' -b || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    networks:
+      - collabsphere-network
+    restart: unless-stopped
+
+  # ==================== Redis ====================
   redis:
     image: redis:7-alpine
     container_name: collabsphere-redis
@@ -40,25 +66,40 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - collabsphere-network
+    restart: unless-stopped
 
-  # RabbitMQ for message broker
+  # ==================== RabbitMQ ====================
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: collabsphere-rabbitmq
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-admin123}
+      RABBITMQ_DEFAULT_VHOST: /
     ports:
       - "5672:5672"
       - "15672:15672"
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     networks:
       - collabsphere-network
+    restart: unless-stopped
 
-  # API Gateway (Ocelot)
+  # ==================== Ocelot API Gateway (CollabSphere) ====================
   gateway:
     build:
       context: ./Backend/gateway
@@ -78,7 +119,43 @@ services:
     networks:
       - collabsphere-network
 
-  # AuthService
+  # ==================== YARP API Gateway (CommHub) ====================
+  api-gateway:
+    build:
+      context: ./Backend
+      dockerfile: ApiGateway/Dockerfile
+    container_name: collabsphere-api-gateway-commhub
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5005
+      - ReverseProxy__Clusters__auth-cluster__Destinations__auth-service__Address=http://commhub-auth-service:5011
+      - ReverseProxy__Clusters__chat-cluster__Destinations__chat-service__Address=http://chat-service:5012
+      - ReverseProxy__Clusters__document-cluster__Destinations__document-service__Address=http://document-service:5013
+      - ReverseProxy__Clusters__notification-cluster__Destinations__notification-service__Address=http://notification-service:5014
+      - JwtSettings__SecretKey=CommHubSuperSecretKeyForJwtAuthentication2024!MinLength32Chars
+      - JwtSettings__Issuer=CommunicationModule
+      - JwtSettings__Audience=CommunicationModuleUsers
+      - AllowedOrigins__0=http://localhost:3000
+      - AllowedOrigins__1=http://localhost
+      - AllowedOrigins__2=http://frontend:80
+    ports:
+      - "5005:5005"
+    depends_on:
+      - commhub-auth-service
+      - chat-service
+      - document-service
+      - notification-service
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+    networks:
+      - collabsphere-network
+    restart: unless-stopped
+
+  # ==================== AuthService (CollabSphere) ====================
   auth-service:
     build:
       context: ./auth.sln
@@ -104,7 +181,7 @@ services:
     networks:
       - collabsphere-network
 
-  # ProjectService
+  # ==================== ProjectService ====================
   project-service:
     build:
       context: ./Backend
@@ -133,7 +210,164 @@ services:
     networks:
       - collabsphere-network
 
-  # Frontend React Application
+  # ==================== AuthService (CommHub) ====================
+  commhub-auth-service:
+    build:
+      context: ./Backend
+      dockerfile: Services/AuthService/Dockerfile
+    container_name: collabsphere-commhub-auth-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5011
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=CommHub_Auth;User Id=sa;Password=CommHub@2024!;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=CommHubSuperSecretKeyForJwtAuthentication2024!MinLength32Chars
+      - JwtSettings__Issuer=CommunicationModule
+      - JwtSettings__Audience=CommunicationModuleUsers
+      - JwtSettings__ExpirationInMinutes=60
+      - JwtSettings__RefreshTokenExpirationInDays=7
+      - UseRabbitMQ=true
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__Port=5672
+      - RabbitMQ__UserName=${RABBITMQ_USER:-admin}
+      - RabbitMQ__Password=${RABBITMQ_PASSWORD:-admin123}
+      - RabbitMQ__ExchangeName=communication_event_bus
+      - RabbitMQ__QueueName=auth_service_queue
+    ports:
+      - "5011:5011"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5011/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - collabsphere-network
+    restart: unless-stopped
+
+  # ==================== ChatService ====================
+  chat-service:
+    build:
+      context: ./Backend
+      dockerfile: Services/ChatService/Dockerfile
+    container_name: collabsphere-chat-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5012
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=CommHub_Chat;User Id=sa;Password=CommHub@2024!;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=CommHubSuperSecretKeyForJwtAuthentication2024!MinLength32Chars
+      - JwtSettings__Issuer=CommunicationModule
+      - JwtSettings__Audience=CommunicationModuleUsers
+      - UseRabbitMQ=true
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__Port=5672
+      - RabbitMQ__UserName=${RABBITMQ_USER:-admin}
+      - RabbitMQ__Password=${RABBITMQ_PASSWORD:-admin123}
+      - RabbitMQ__ExchangeName=communication_event_bus
+      - RabbitMQ__QueueName=chat_service_queue
+      - Redis__ConnectionString=redis:6379
+    ports:
+      - "5012:5012"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5012/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - collabsphere-network
+    restart: unless-stopped
+
+  # ==================== DocumentService ====================
+  document-service:
+    build:
+      context: ./Backend
+      dockerfile: Services/DocumentService/Dockerfile
+    container_name: collabsphere-document-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5013
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=CommHub_Documents;User Id=sa;Password=CommHub@2024!;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=CommHubSuperSecretKeyForJwtAuthentication2024!MinLength32Chars
+      - JwtSettings__Issuer=CommunicationModule
+      - JwtSettings__Audience=CommunicationModuleUsers
+      - UseRabbitMQ=true
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__Port=5672
+      - RabbitMQ__UserName=${RABBITMQ_USER:-admin}
+      - RabbitMQ__Password=${RABBITMQ_PASSWORD:-admin123}
+      - RabbitMQ__ExchangeName=communication_event_bus
+      - RabbitMQ__QueueName=document_service_queue
+      - FileStorage__UploadPath=/app/uploads
+      - FileStorage__MaxFileSizeMB=100
+    ports:
+      - "5013:5013"
+    volumes:
+      - document-uploads:/app/uploads
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5013/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - collabsphere-network
+    restart: unless-stopped
+
+  # ==================== NotificationService ====================
+  notification-service:
+    build:
+      context: ./Backend
+      dockerfile: Services/NotificationService/Dockerfile
+    container_name: collabsphere-notification-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5014
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=CommHub_Notifications;User Id=sa;Password=CommHub@2024!;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=CommHubSuperSecretKeyForJwtAuthentication2024!MinLength32Chars
+      - JwtSettings__Issuer=CommunicationModule
+      - JwtSettings__Audience=CommunicationModuleUsers
+      - UseRabbitMQ=true
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__Port=5672
+      - RabbitMQ__UserName=${RABBITMQ_USER:-admin}
+      - RabbitMQ__Password=${RABBITMQ_PASSWORD:-admin123}
+      - RabbitMQ__ExchangeName=communication_event_bus
+      - RabbitMQ__QueueName=notification_service_queue
+    ports:
+      - "5014:5014"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5014/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - collabsphere-network
+    restart: unless-stopped
+
+  # ==================== Frontend React Application ====================
   frontend:
     build:
       context: ./frontend/collabsphere-web
@@ -143,17 +377,24 @@ services:
       - "3000:80"
     environment:
       - VITE_API_URL=http://localhost:5000/api
+      - VITE_COMMHUB_API_URL=http://localhost:5005/api
+      - VITE_SIGNALR_URL=http://localhost:5005/hubs
     depends_on:
       - gateway
+      - api-gateway
     networks:
       - collabsphere-network
 
+# ==================== Networks ====================
 networks:
   collabsphere-network:
     driver: bridge
 
+# ==================== Volumes ====================
 volumes:
   postgres-project-data:
   postgres-auth-data:
+  sqlserver-data:
   redis-data:
   rabbitmq-data:
+  document-uploads:
