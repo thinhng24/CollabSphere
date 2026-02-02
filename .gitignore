@@ -88,3 +88,7 @@ logs/
 tmp/
 temp/
 *.tmp
+# Exclude temporary files
+.claude/
+CLAUDE.md
+SECURITY_FIX_JWT.md

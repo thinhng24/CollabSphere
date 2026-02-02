@@ -1,39 +1,30 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { CircularProgress, Box } from '@mui/material';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
-// Auth pages
+// Eagerly load critical components
 import Login from './pages/Login';
-
-// Dashboard pages
-import LecturerDashboard from './pages/LecturerDashboard';
-import HeadDeptDashboard from './pages/HeadDeptDashboard';
-
-// Academic pages
-import SubjectsPage from './pages/SubjectsPage';
-import ClassesPage from './pages/ClassesPage';
-import ProjectsPage from './pages/ProjectsPage';
-import ProjectDetail from './pages/ProjectDetail';
-import ImportExcelPage from './pages/ImportExcelPage';
-
-// Teams pages
-import TeamsPage from './pages/TeamsPage';
-import CheckpointsPage from './pages/CheckpointsPage';
-import WorkspacePage from './pages/WorkspacePage';
-
-// Communication pages
-import ChatPage from './pages/ChatPage';
-import MeetingsPage from './pages/MeetingsPage';
-import ResourcesPage from './pages/ResourcesPage';
-
-// User pages
-import ProfilePage from './pages/ProfilePage';
-import AdminUsersPage from './pages/AdminUsersPage';
-
-// Layout
 import DashboardLayout from './components/DashboardLayout';
+
+// Lazy load all other pages for code splitting
+const LecturerDashboard = lazy(() => import('./pages/LecturerDashboard'));
+const HeadDeptDashboard = lazy(() => import('./pages/HeadDeptDashboard'));
+const SubjectsPage = lazy(() => import('./pages/SubjectsPage'));
+const ClassesPage = lazy(() => import('./pages/ClassesPage'));
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage'));
+const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
+const ImportExcelPage = lazy(() => import('./pages/ImportExcelPage'));
+const TeamsPage = lazy(() => import('./pages/TeamsPage'));
+const CheckpointsPage = lazy(() => import('./pages/CheckpointsPage'));
+const WorkspacePage = lazy(() => import('./pages/WorkspacePage'));
+const ChatPage = lazy(() => import('./pages/ChatPage'));
+const MeetingsPage = lazy(() => import('./pages/MeetingsPage'));
+const ResourcesPage = lazy(() => import('./pages/ResourcesPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const AdminUsersPage = lazy(() => import('./pages/AdminUsersPage'));
 
 const theme = createTheme({
   palette: {
@@ -45,6 +36,18 @@ const theme = createTheme({
     },
   },
 });
+
+// Loading fallback component
+const LoadingFallback: React.FC = () => (
+  <Box
+    display="flex"
+    justifyContent="center"
+    alignItems="center"
+    minHeight="100vh"
+  >
+    <CircularProgress />
+  </Box>
+);
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -78,9 +81,10 @@ const AppRoutes: React.FC = () => {
   };
 
   return (
-    <Routes>
-      {/* Auth routes */}
-      <Route path="/login" element={<Login />} />
+    <Suspense fallback={<LoadingFallback />}>
+      <Routes>
+        {/* Auth routes */}
+        <Route path="/login" element={<Login />} />
 
       {/* Dashboard */}
       <Route
@@ -304,9 +308,10 @@ const AppRoutes: React.FC = () => {
         }
       />
 
-      {/* Catch all - redirect to home */}
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
+        {/* Catch all - redirect to home */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Suspense>
   );
 };
 

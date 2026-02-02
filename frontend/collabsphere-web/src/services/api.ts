@@ -24,17 +24,38 @@ import {
 } from '../types';
 
 // ============= MOCK MODE =============
-const USE_MOCK = true;
+// Controlled by VITE_USE_MOCK environment variable
+const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true' || import.meta.env.VITE_USE_MOCK === true;
 // =====================================
+
+// ============= MOCK API CONSTANTS =============
+const MOCK_DELAYS = {
+  DEFAULT: 300,
+  LOGIN: 500,
+  IMPORT: 1000,
+} as const;
 
 // ==================== STORAGE HELPERS ====================
 const getStorage = <T>(key: string, defaultValue: T[] = []): T[] => {
-  const data = localStorage.getItem(key);
-  return data ? JSON.parse(data) : defaultValue;
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : defaultValue;
+  } catch (error) {
+    console.error(`Error reading from localStorage key "${key}":`, error);
+    return defaultValue;
+  }
 };
 
-const setStorage = <T>(key: string, data: T[]) => {
-  localStorage.setItem(key, JSON.stringify(data));
+const setStorage = <T>(key: string, data: T[]): void => {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (error) {
+    console.error(`Error writing to localStorage key "${key}":`, error);
+    // Handle quota exceeded or other storage errors gracefully
+    if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+      console.warn('localStorage quota exceeded. Consider clearing old data.');
+    }
+  }
 };
 
 // Storage keys
@@ -61,7 +82,7 @@ const KEYS = {
 };
 
 // Helper to create mock response with delay
-const mockResponse = <T>(data: T, delay = 300): Promise<{ data: ApiResponse<T> }> => {
+const mockResponse = <T>(data: T, delay = MOCK_DELAYS.DEFAULT): Promise<{ data: ApiResponse<T> }> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({ data: { isSuccess: true, data } });
@@ -71,7 +92,7 @@ const mockResponse = <T>(data: T, delay = 300): Promise<{ data: ApiResponse<T> }
 
 const mockError = (message: string): Promise<never> => {
   return new Promise((_, reject) => {
-    setTimeout(() => reject({ response: { data: { message } } }), 300);
+    setTimeout(() => reject({ response: { data: { message } } }), MOCK_DELAYS.DEFAULT);
   });
 };
 
@@ -469,7 +490,7 @@ const mockSubjectsAPI = {
     ];
     subjects.push(...imported);
     setStorage(KEYS.SUBJECTS, subjects);
-    return mockResponse({ success: true, totalRows: 2, successCount: 2, errorCount: 0, errors: [] }, 1000);
+    return mockResponse({ success: true, totalRows: 2, successCount: 2, errorCount: 0, errors: [] }, MOCK_DELAYS.IMPORT);
   }
 };
 
@@ -495,7 +516,7 @@ const mockSyllabusAPI = {
     return mockResponse(newSyllabus);
   },
   import: (_file: File) => {
-    return mockResponse({ success: true, totalRows: 1, successCount: 1, errorCount: 0, errors: [] }, 1000);
+    return mockResponse({ success: true, totalRows: 1, successCount: 1, errorCount: 0, errors: [] }, MOCK_DELAYS.IMPORT);
   }
 };
 
@@ -567,7 +588,7 @@ const mockClassesAPI = {
     return mockResponse(newMember);
   },
   import: (_file: File) => {
-    return mockResponse({ success: true, totalRows: 3, successCount: 3, errorCount: 0, errors: [] }, 1000);
+    return mockResponse({ success: true, totalRows: 3, successCount: 3, errorCount: 0, errors: [] }, MOCK_DELAYS.IMPORT);
   }
 };
 
@@ -1107,7 +1128,7 @@ export const authAPI = {
             user
           }
         });
-      }, 500);
+      }, MOCK_DELAYS.LOGIN);
     });
   },
   register: (data: { email: string; password: string; fullName: string; role: User['role'] }): Promise<{ data: User }> => {
@@ -1125,7 +1146,7 @@ export const authAPI = {
         users.push(newUser);
         setStorage(KEYS.USERS, users);
         resolve({ data: newUser });
-      }, 500);
+      }, MOCK_DELAYS.LOGIN);
     });
   },
   updateProfile: (userId: string, data: Partial<User>): Promise<{ data: User }> => {
@@ -1140,28 +1161,168 @@ export const authAPI = {
         } else {
           reject({ response: { data: { message: 'User not found' } } });
         }
-      }, 300);
+      }, MOCK_DELAYS.DEFAULT);
     });
   }
 };
 
+// ==================== API TYPE DEFINITIONS ====================
+type MockApiResponse<T> = Promise<{ data: ApiResponse<T> }>;
+
+interface ProjectsAPI {
+  getAll: () => MockApiResponse<PagedResult<Project>>;
+  getById: (id: string) => MockApiResponse<Project | undefined>;
+  create: (data: CreateProjectRequest) => MockApiResponse<Project>;
+  update: (id: string, data: Partial<CreateProjectRequest>) => MockApiResponse<Project> | Promise<never>;
+  delete: (id: string) => MockApiResponse<undefined>;
+  submit: (id: string) => MockApiResponse<Project> | Promise<never>;
+  approve: (id: string, comments?: string) => MockApiResponse<Project> | Promise<never>;
+  reject: (id: string, reason: string) => MockApiResponse<Project> | Promise<never>;
+  generateMilestones: (id: string) => MockApiResponse<Milestone[]> | Promise<never>;
+  getMilestones: (projectId: string) => MockApiResponse<Milestone[]>;
+  addMilestone: (projectId: string, data: Omit<CreateMilestoneRequest, 'projectId'>) => MockApiResponse<Milestone>;
+  deleteMilestone: (projectId: string, milestoneId: string) => MockApiResponse<undefined>;
+}
+
+interface MilestonesAPI {
+  getByProjectId: (projectId: string) => MockApiResponse<Milestone[]>;
+  getById: (id: string) => MockApiResponse<Milestone | undefined>;
+  create: (data: CreateMilestoneRequest) => MockApiResponse<Milestone>;
+  update: (id: string, data: Partial<CreateMilestoneRequest>) => MockApiResponse<Milestone> | Promise<never>;
+  delete: (id: string) => MockApiResponse<undefined>;
+  complete: (id: string) => MockApiResponse<Milestone> | Promise<never>;
+}
+
+interface UsersAPI {
+  getAll: (role?: string) => MockApiResponse<{ items: User[]; totalCount: number }>;
+  getById: (id: string) => MockApiResponse<User | undefined>;
+  create: (data: Partial<User>) => MockApiResponse<User>;
+  update: (id: string, data: Partial<User>) => MockApiResponse<User> | Promise<never>;
+  deactivate: (id: string) => MockApiResponse<User> | Promise<never>;
+  activate: (id: string) => MockApiResponse<User> | Promise<never>;
+}
+
+interface SubjectsAPI {
+  getAll: () => MockApiResponse<{ items: Subject[] }>;
+  getById: (id: string) => MockApiResponse<Subject | undefined>;
+  create: (data: Partial<Subject>) => MockApiResponse<Subject>;
+  update: (id: string, data: Partial<Subject>) => MockApiResponse<Subject> | Promise<never>;
+  delete: (id: string) => MockApiResponse<undefined>;
+  import: (file: File) => MockApiResponse<ImportResult>;
+}
+
+interface SyllabusAPI {
+  getAll: () => MockApiResponse<{ items: Syllabus[] }>;
+  getById: (id: string) => MockApiResponse<Syllabus | undefined>;
+  getBySubjectId: (subjectId: string) => MockApiResponse<Syllabus[]>;
+  create: (data: Partial<Syllabus>) => MockApiResponse<Syllabus>;
+  import: (file: File) => MockApiResponse<ImportResult>;
+}
+
+interface ClassesAPI {
+  getAll: () => MockApiResponse<{ items: Class[] }>;
+  getById: (id: string) => MockApiResponse<Class | undefined>;
+  getByLecturer: (lecturerId: string) => MockApiResponse<{ items: Class[] }>;
+  create: (data: Partial<Class>) => MockApiResponse<Class>;
+  update: (id: string, data: Partial<Class>) => MockApiResponse<Class> | Promise<never>;
+  assignLecturer: (classId: string, lecturerId: string) => MockApiResponse<Class> | Promise<never>;
+  getMembers: (classId: string) => MockApiResponse<{ items: ClassMember[] }>;
+  addMember: (classId: string, userId: string, role: 'Lecturer' | 'Student') => MockApiResponse<ClassMember>;
+  import: (file: File) => MockApiResponse<ImportResult>;
+}
+
+interface TeamsAPI {
+  getAll: () => MockApiResponse<{ items: Team[] }>;
+  getById: (id: string) => MockApiResponse<Team | undefined>;
+  getByClass: (classId: string) => MockApiResponse<{ items: Team[] }>;
+  getByStudent: (studentId: string) => MockApiResponse<{ items: Team[] }>;
+  create: (data: Partial<Team>) => MockApiResponse<Team>;
+  update: (id: string, data: Partial<Team>) => MockApiResponse<Team> | Promise<never>;
+  delete: (id: string) => MockApiResponse<undefined>;
+  getMembers: (teamId: string) => MockApiResponse<{ items: TeamMember[] }>;
+  addMember: (teamId: string, userId: string, role?: 'Leader' | 'Member') => MockApiResponse<TeamMember>;
+  removeMember: (teamId: string, memberId: string) => MockApiResponse<undefined>;
+  assignProject: (teamId: string, projectId: string) => MockApiResponse<Team> | Promise<never>;
+}
+
+interface CheckpointsAPI {
+  getByTeam: (teamId: string) => MockApiResponse<{ items: Checkpoint[] }>;
+  getById: (id: string) => MockApiResponse<Checkpoint | undefined>;
+  create: (data: Partial<Checkpoint>) => MockApiResponse<Checkpoint>;
+  update: (id: string, data: Partial<Checkpoint>) => MockApiResponse<Checkpoint> | Promise<never>;
+  submit: (id: string, content: string) => MockApiResponse<Checkpoint> | Promise<never>;
+  approve: (id: string, feedback: string, grade: number) => MockApiResponse<Checkpoint> | Promise<never>;
+  reject: (id: string, feedback: string) => MockApiResponse<Checkpoint> | Promise<never>;
+}
+
+interface CardsAPI {
+  getByTeam: (teamId: string) => MockApiResponse<{ items: WorkspaceCard[] }>;
+  create: (data: Partial<WorkspaceCard>) => MockApiResponse<WorkspaceCard>;
+  update: (id: string, data: Partial<WorkspaceCard>) => MockApiResponse<WorkspaceCard> | Promise<never>;
+  delete: (id: string) => MockApiResponse<undefined>;
+  moveCard: (id: string, status: WorkspaceCard['status'], order: number) => MockApiResponse<WorkspaceCard> | Promise<never>;
+}
+
+interface TasksAPI {
+  getByCard: (cardId: string) => MockApiResponse<{ items: Task[] }>;
+  create: (data: Partial<Task>) => MockApiResponse<Task>;
+  toggle: (id: string) => MockApiResponse<Task> | Promise<never>;
+  delete: (id: string) => MockApiResponse<undefined>;
+}
+
+interface ChatAPI {
+  getRooms: (userId: string) => MockApiResponse<{ items: ChatRoom[] }>;
+  getMessages: (roomId: string, limit?: number) => MockApiResponse<{ items: ChatMessage[] }>;
+  sendMessage: (roomId: string, senderId: string, content: string) => MockApiResponse<ChatMessage>;
+  markAsRead: (roomId: string) => MockApiResponse<undefined>;
+}
+
+interface NotificationsAPI {
+  getByUser: (userId: string) => MockApiResponse<{ items: Notification[] }>;
+  markAsRead: (id: string) => MockApiResponse<Notification> | Promise<never>;
+  markAllAsRead: (userId: string) => MockApiResponse<undefined>;
+}
+
+interface ResourcesAPI {
+  getByClass: (classId: string) => MockApiResponse<{ items: Resource[] }>;
+  getByTeam: (teamId: string) => MockApiResponse<{ items: Resource[] }>;
+  upload: (data: Partial<Resource>) => MockApiResponse<Resource>;
+  delete: (id: string) => MockApiResponse<undefined>;
+}
+
+interface MeetingsAPI {
+  getAll: () => MockApiResponse<{ items: Meeting[] }>;
+  getByTeam: (teamId: string) => MockApiResponse<{ items: Meeting[] }>;
+  getByClass: (classId: string) => MockApiResponse<{ items: Meeting[] }>;
+  getUpcoming: (userId: string) => MockApiResponse<{ items: Meeting[] }>;
+  create: (data: Partial<Meeting>) => MockApiResponse<Meeting>;
+  start: (id: string) => MockApiResponse<Meeting> | Promise<never>;
+  end: (id: string) => MockApiResponse<Meeting> | Promise<never>;
+  cancel: (id: string) => MockApiResponse<Meeting> | Promise<never>;
+}
+
+interface EvaluationsAPI {
+  getByTeam: (teamId: string) => MockApiResponse<{ items: Evaluation[] }>;
+  create: (data: Partial<Evaluation>) => MockApiResponse<Evaluation>;
+  getPeerReviews: (teamId: string) => MockApiResponse<{ items: PeerReview[] }>;
+  createPeerReview: (data: Partial<PeerReview>) => MockApiResponse<PeerReview>;
+}
+
 // ==================== EXPORTS ====================
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export const projectsAPI: any = USE_MOCK ? mockProjectsAPI : {};
-export const milestonesAPI: any = USE_MOCK ? mockMilestonesAPI : {};
-export const usersAPI: any = USE_MOCK ? mockUsersAPI : {};
-export const subjectsAPI: any = USE_MOCK ? mockSubjectsAPI : {};
-export const syllabusAPI: any = USE_MOCK ? mockSyllabusAPI : {};
-export const classesAPI: any = USE_MOCK ? mockClassesAPI : {};
-export const teamsAPI: any = USE_MOCK ? mockTeamsAPI : {};
-export const checkpointsAPI: any = USE_MOCK ? mockCheckpointsAPI : {};
-export const cardsAPI: any = USE_MOCK ? mockCardsAPI : {};
-export const tasksAPI: any = USE_MOCK ? mockTasksAPI : {};
-export const chatAPI: any = USE_MOCK ? mockChatAPI : {};
-export const notificationsAPI: any = USE_MOCK ? mockNotificationsAPI : {};
-export const resourcesAPI: any = USE_MOCK ? mockResourcesAPI : {};
-export const meetingsAPI: any = USE_MOCK ? mockMeetingsAPI : {};
-export const evaluationsAPI: any = USE_MOCK ? mockEvaluationsAPI : {};
-/* eslint-enable @typescript-eslint/no-explicit-any */
+export const projectsAPI: ProjectsAPI = USE_MOCK ? mockProjectsAPI : {} as ProjectsAPI;
+export const milestonesAPI: MilestonesAPI = USE_MOCK ? mockMilestonesAPI : {} as MilestonesAPI;
+export const usersAPI: UsersAPI = USE_MOCK ? mockUsersAPI : {} as UsersAPI;
+export const subjectsAPI: SubjectsAPI = USE_MOCK ? mockSubjectsAPI : {} as SubjectsAPI;
+export const syllabusAPI: SyllabusAPI = USE_MOCK ? mockSyllabusAPI : {} as SyllabusAPI;
+export const classesAPI: ClassesAPI = USE_MOCK ? mockClassesAPI : {} as ClassesAPI;
+export const teamsAPI: TeamsAPI = USE_MOCK ? mockTeamsAPI : {} as TeamsAPI;
+export const checkpointsAPI: CheckpointsAPI = USE_MOCK ? mockCheckpointsAPI : {} as CheckpointsAPI;
+export const cardsAPI: CardsAPI = USE_MOCK ? mockCardsAPI : {} as CardsAPI;
+export const tasksAPI: TasksAPI = USE_MOCK ? mockTasksAPI : {} as TasksAPI;
+export const chatAPI: ChatAPI = USE_MOCK ? mockChatAPI : {} as ChatAPI;
+export const notificationsAPI: NotificationsAPI = USE_MOCK ? mockNotificationsAPI : {} as NotificationsAPI;
+export const resourcesAPI: ResourcesAPI = USE_MOCK ? mockResourcesAPI : {} as ResourcesAPI;
+export const meetingsAPI: MeetingsAPI = USE_MOCK ? mockMeetingsAPI : {} as MeetingsAPI;
+export const evaluationsAPI: EvaluationsAPI = USE_MOCK ? mockEvaluationsAPI : {} as EvaluationsAPI;
 
 export default api;
