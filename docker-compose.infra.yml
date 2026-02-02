@@ -1,0 +1,120 @@
+# ==================== CommHub Infrastructure Only ====================
+# Chạy infrastructure riêng để tăng tốc khởi động services
+# Usage: docker-compose -f docker-compose.infra.yml up -d
+#
+# Khởi động 1 lần và để chạy nền, các services sẽ khởi động nhanh hơn nhiều
+
+services:
+  # ==================== SQL Server Database ====================
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: commhub-sqlserver-dev
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=CommHub@2024!
+      - MSSQL_PID=Express
+      # Tối ưu performance
+      - MSSQL_MEMORY_LIMIT_MB=1024
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data-dev:/var/opt/mssql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'CommHub@2024!' -Q 'SELECT 1' -C -b || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'CommHub@2024!' -Q 'SELECT 1' -b || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - commhub-network-dev
+    restart: unless-stopped
+
+  # ==================== RabbitMQ Message Broker ====================
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: commhub-rabbitmq-dev
+    hostname: commhub-rabbit
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_DEFAULT_VHOST=/
+      # Tối ưu startup
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log [{console,[{level,warning}]}]
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data-dev:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    networks:
+      - commhub-network-dev
+    restart: unless-stopped
+
+  # ==================== Redis Cache ====================
+  redis:
+    image: redis:7-alpine
+    container_name: commhub-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data-dev:/data
+    command: redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    networks:
+      - commhub-network-dev
+    restart: unless-stopped
+
+  # ==================== Adminer (Database Management UI) ====================
+  adminer:
+    image: adminer:latest
+    container_name: commhub-adminer-dev
+    ports:
+      - "8080:8080"
+    environment:
+      - ADMINER_DEFAULT_SERVER=sqlserver
+      - ADMINER_DESIGN=nette
+    depends_on:
+      - sqlserver
+    networks:
+      - commhub-network-dev
+    restart: unless-stopped
+
+  # ==================== MailHog (Email Testing) ====================
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: commhub-mailhog-dev
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - commhub-network-dev
+    restart: unless-stopped
+
+# ==================== Networks ====================
+networks:
+  commhub-network-dev:
+    driver: bridge
+    name: commhub-network-dev
+
+# ==================== Volumes ====================
+volumes:
+  sqlserver-data-dev:
+    name: commhub-sqlserver-data-dev
+  rabbitmq-data-dev:
+    name: commhub-rabbitmq-data-dev
+  redis-data-dev:
+    name: commhub-redis-data-dev

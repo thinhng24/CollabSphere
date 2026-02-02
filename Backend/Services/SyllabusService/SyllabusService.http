@@ -1,0 +1,6 @@
+@SyllabusService_HostAddress = http://localhost:5232
+
+GET {{SyllabusService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

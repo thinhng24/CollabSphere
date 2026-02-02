@@ -1,5 +1,209 @@
-Backend/obj/
-Backend/bin/
-**/obj/
-**/bin/
+
+# ==================== .NET / C# ====================
+## Build results
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+bin/
+obj/
+*.cache
+
+# Rider
+.idea/
+*.sln.iml
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+## NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+project.assets.json
+project.lock.json
+
+## Rider / JetBrains
+.idea/
+*.sln.iml
+
+## Build outputs
+*.dll
+*.exe
+*.pdb
+*.mdb
+
+# ==================== Node.js / Frontend ====================
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+
+# Node.js
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+## Build outputs
+dist/
+build/
+.next/
+out/
+
+## Cache
+.cache/
+.parcel-cache/
+.vite/
+
+## Environment
+.env
+dist/
+build/
+
+# React
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ==================== Docker ====================
+# Docker volumes data (if mounted locally)
+docker-data/
+postgres-data/
+sqlserver-data/
+redis-data/
+rabbitmq-data/
+
+# ==================== IDE / Editors ====================
+## VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+## Sublime Text
+*.sublime-workspace
+
+## Vim
+# Docker
+*.log
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+*.swp
+*.swo
+*~
+
+# ==================== OS Generated ====================
+## Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+NUL
+
+## macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+## Linux
+*~
+
+# ==================== Logs ====================
+*.log
+logs/
+
+# ==================== Secrets / Credentials ====================
+*.pem
+*.key
+*.pfx
+*.p12
+secrets.json
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json.example
+
+# ==================== Misc ====================
+*.tmp
+*.temp
+*.bak
+*.backup
+coverage/
+.nyc_output/
+*.lcov
+
+# ==================== Project Specific ====================
+# Keep example files
+!.env.example
+!*.example
+
+# Uploaded files (if stored locally)
+uploads/
+wwwroot/uploads/
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
