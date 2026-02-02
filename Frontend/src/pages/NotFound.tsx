@@ -15,7 +15,7 @@ const NotFound = () => {
 
 const styles = {
   container: {
-    textAlign: "center",
+    textAlign: "center" as const,
     marginTop: 100,
   },
   link: {
