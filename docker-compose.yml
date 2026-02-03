@@ -1,43 +1,283 @@
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: pm-mysql
-    restart: unless-stopped
+  # Infrastructure Services
+  postgres:
+    image: postgres:16-alpine
+    container_name: collabsphere-postgres
     environment:
-      MYSQL_ROOT_PASSWORD: root123
-      MYSQL_DATABASE: projectdb
-      MYSQL_USER: app
-      MYSQL_PASSWORD: app123
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+      - POSTGRES_DB=collabsphere
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+      - POSTGRES_HOST_AUTH_METHOD=md5
     ports:
-      - "3306:3306"
+      - "5434:5432"
     volumes:
-      - pm_mysql_data:/var/lib/mysql
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - collabsphere-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot123"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d collabsphere"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+    restart: unless-stopped
+    shm_size: 128mb
+
+  redis:
+    image: redis:7-alpine
+    container_name: collabsphere-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - collabsphere-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 5
+    restart: unless-stopped
 
-  backend:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: collabsphere-rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - collabsphere-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: collabsphere-pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@collabsphere.com
+      - PGADMIN_DEFAULT_PASSWORD=admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - collabsphere-network
+    restart: unless-stopped
+
+  # API Gateway
+  gateway:
     build:
       context: ./Backend
-    container_name: pm-backend
+      dockerfile: gateway/Dockerfile
+    container_name: collabsphere-gateway
     ports:
-      - "5000:8080"
+      - "5001:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - JwtSettings__Secret=CollabSphere-Super-Secret-Key-For-JWT-Token-Generation-Min-32-Chars
+      - JwtSettings__Issuer=CollabSphere
+      - JwtSettings__Audience=CollabSphereUsers
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - collabsphere-network
+    restart: unless-stopped
 
-  frontend:
+  # Microservices
+  project-service:
     build:
-      context: ./frontend
-    container_name: pm-frontend
-    ports:
-      - "5173:5173"
+      context: ./Backend
+      dockerfile: services/ProjectService/Dockerfile
+    container_name: collabsphere-project-service
+    expose:
+      - "8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=collabsphere_project;Username=postgres;Password=postgres123
+      - JwtSettings__Secret=CollabSphere-Super-Secret-Key-For-JWT-Token-Generation-Min-32-Chars
+      - JwtSettings__Issuer=CollabSphere
+      - JwtSettings__Audience=CollabSphereUsers
+      - Redis__ConnectionString=redis:6379
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__Username=guest
+      - RabbitMQ__Password=guest
     depends_on:
-      - backend
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - collabsphere-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  class-service:
+    build:
+      context: ./Backend
+      dockerfile: services/ClassService/Dockerfile
+    container_name: collabsphere-class-service
+    expose:
+      - "8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=collabsphere_class;Username=postgres;Password=postgres123
+      - JwtSettings__Secret=CollabSphere-Super-Secret-Key-For-JWT-Token-Generation-Min-32-Chars
+      - JwtSettings__Issuer=CollabSphere
+      - JwtSettings__Audience=CollabSphereUsers
+      - Redis__ConnectionString=redis:6379
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__Username=guest
+      - RabbitMQ__Password=guest
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - collabsphere-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  subject-service:
+    build:
+      context: ./Backend
+      dockerfile: services/SubjectService/Dockerfile
+    container_name: collabsphere-subject-service
+    expose:
+      - "8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=collabsphere_subject;Username=postgres;Password=postgres123
+      - JwtSettings__Secret=CollabSphere-Super-Secret-Key-For-JWT-Token-Generation-Min-32-Chars
+      - JwtSettings__Issuer=CollabSphere
+      - JwtSettings__Audience=CollabSphereUsers
+      - Redis__ConnectionString=redis:6379
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__Username=guest
+      - RabbitMQ__Password=guest
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - collabsphere-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  team-service:
+    build:
+      context: ./Backend
+      dockerfile: services/TeamService/Dockerfile
+    container_name: collabsphere-team-service
+    expose:
+      - "8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=collabsphere_team;Username=postgres;Password=postgres123
+      - JwtSettings__Secret=CollabSphere-Super-Secret-Key-For-JWT-Token-Generation-Min-32-Chars
+      - JwtSettings__Issuer=CollabSphere
+      - JwtSettings__Audience=CollabSphereUsers
+      - Redis__ConnectionString=redis:6379
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__Username=guest
+      - RabbitMQ__Password=guest
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - collabsphere-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  evaluation-service:
+    build:
+      context: ./Backend
+      dockerfile: services/EvaluationService/Dockerfile
+    container_name: collabsphere-evaluation-service
+    expose:
+      - "8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=collabsphere_evaluation;Username=postgres;Password=postgres123
+      - JwtSettings__Secret=CollabSphere-Super-Secret-Key-For-JWT-Token-Generation-Min-32-Chars
+      - JwtSettings__Issuer=CollabSphere
+      - JwtSettings__Audience=CollabSphereUsers
+      - Redis__ConnectionString=redis:6379
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__Username=guest
+      - RabbitMQ__Password=guest
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - collabsphere-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
 
 volumes:
-  pm_mysql_data:
+  postgres-data:
+  redis-data:
+  rabbitmq-data:
+
+networks:
+  collabsphere-network:
+    driver: bridge
