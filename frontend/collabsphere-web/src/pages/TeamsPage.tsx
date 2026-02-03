@@ -82,8 +82,8 @@ const TeamsPage: React.FC = () => {
   const loadData = async () => {
     try {
       const [teamsRes, classesRes, projectsRes, usersRes] = await Promise.all([
-        isStudent() ? teamsAPI.getByStudent(user?.id) : teamsAPI.getAll(),
-        isLecturer() ? classesAPI.getByLecturer(user?.id) : classesAPI.getAll(),
+        isStudent() && user?.id ? teamsAPI.getByStudent(user.id) : teamsAPI.getAll(),
+        isLecturer() && user?.id ? classesAPI.getByLecturer(user.id) : classesAPI.getAll(),
         projectsAPI.getAll(),
         usersAPI.getAll('Student')
       ]);

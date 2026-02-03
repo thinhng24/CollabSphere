@@ -73,13 +73,16 @@ const CheckpointsPage: React.FC = () => {
   }, [teamId]);
 
   const loadData = async () => {
+    if (!teamId) return;
     try {
       const [teamRes, membersRes, checkpointsRes] = await Promise.all([
         teamsAPI.getById(teamId),
         teamsAPI.getMembers(teamId),
         checkpointsAPI.getByTeam(teamId)
       ]);
-      setTeam(teamRes.data.data);
+      if (teamRes.data.data) {
+        setTeam(teamRes.data.data);
+      }
       setMembers(membersRes.data.data?.items || []);
       setCheckpoints(checkpointsRes.data.data?.items || []);
     } catch {

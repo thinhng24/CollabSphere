@@ -84,8 +84,14 @@ const ProjectDetail: React.FC = () => {
         projectsAPI.getById(id),
         milestonesAPI.getByProjectId(id)
       ]);
-      setProject(projectRes.data.data || projectRes.data);
-      setMilestones(milestonesRes.data.data || milestonesRes.data || []);
+      const projectData = projectRes.data.data;
+      if (projectData && !Array.isArray(projectData)) {
+        setProject(projectData);
+      }
+      const milestonesData = milestonesRes.data.data;
+      if (Array.isArray(milestonesData)) {
+        setMilestones(milestonesData);
+      }
     } catch (err) {
       setError('Failed to load project details');
       console.error(err);
@@ -155,7 +161,7 @@ const ProjectDetail: React.FC = () => {
     try {
       setAILoading(true);
       setError('');
-      await projectsAPI.generateMilestones(id, aiFormData.syllabusId, aiFormData.numberOfMilestones);
+      await projectsAPI.generateMilestones(id);
       setSuccess('AI-powered milestones generated successfully!');
       setOpenAIDialog(false);
       loadProjectAndMilestones();

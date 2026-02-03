@@ -58,7 +58,8 @@ const LecturerDashboard: React.FC = () => {
       setLoading(true);
       const response = await projectsAPI.getAll();
       const data = response.data.data;
-      setProjects(data?.items || data || []);
+      const projects = Array.isArray(data) ? data : (data?.items || []);
+      setProjects(projects);
     } catch (err) {
       setError('Failed to load projects');
       console.error(err);

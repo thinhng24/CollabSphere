@@ -82,7 +82,7 @@ const ClassesPage: React.FC = () => {
   const loadData = async () => {
     try {
       const [classesRes, subjectsRes, usersRes] = await Promise.all([
-        isLecturer() ? classesAPI.getByLecturer(user?.id) : classesAPI.getAll(),
+        isLecturer() && user?.id ? classesAPI.getByLecturer(user.id) : classesAPI.getAll(),
         subjectsAPI.getAll(),
         usersAPI.getAll()
       ]);

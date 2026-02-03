@@ -87,13 +87,16 @@ const WorkspacePage: React.FC = () => {
   }, [teamId]);
 
   const loadData = async () => {
+    if (!teamId) return;
     try {
       const [teamRes, membersRes, cardsRes] = await Promise.all([
         teamsAPI.getById(teamId),
         teamsAPI.getMembers(teamId),
         cardsAPI.getByTeam(teamId)
       ]);
-      setTeam(teamRes.data.data);
+      if (teamRes.data.data) {
+        setTeam(teamRes.data.data);
+      }
       setMembers(membersRes.data.data?.items || []);
       setCards(cardsRes.data.data?.items || []);
     } catch {

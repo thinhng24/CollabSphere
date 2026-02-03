@@ -45,9 +45,9 @@ const HeadDeptDashboard: React.FC = () => {
   const loadProjects = async () => {
     try {
       setLoading(true);
-      const response = await projectsAPI.getAll(1, 50);
+      const response = await projectsAPI.getAll();
       const data = response.data.data;
-      const allProjects: Project[] = data?.items || data || [];
+      const allProjects: Project[] = Array.isArray(data) ? data : (data?.items || []);
 
       // Filter to show submitted projects first
       const sorted = [...allProjects].sort((a, b) => {

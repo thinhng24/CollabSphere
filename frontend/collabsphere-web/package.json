@@ -2,6 +2,7 @@
   "name": "collabsphere-web",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "CollabSphere - Project & Milestone Management Frontend",
   "dependencies": {
     "react": "^18.2.0",

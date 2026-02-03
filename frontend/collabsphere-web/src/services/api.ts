@@ -20,7 +20,9 @@ import {
   Resource,
   Meeting,
   Evaluation,
-  PeerReview
+  PeerReview,
+  PagedResult,
+  ImportResult
 } from '../types';
 
 // ============= MOCK MODE =============
@@ -82,7 +84,7 @@ const KEYS = {
 };
 
 // Helper to create mock response with delay
-const mockResponse = <T>(data: T, delay = MOCK_DELAYS.DEFAULT): Promise<{ data: ApiResponse<T> }> => {
+const mockResponse = <T>(data: T, delay: number = MOCK_DELAYS.DEFAULT): Promise<{ data: ApiResponse<T> }> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({ data: { isSuccess: true, data } });

@@ -77,7 +77,7 @@ const ResourcesPage: React.FC = () => {
     try {
       const [classesRes, teamsRes] = await Promise.all([
         classesAPI.getAll(),
-        isStudent() ? teamsAPI.getByStudent(user?.id) : teamsAPI.getAll()
+        isStudent() && user?.id ? teamsAPI.getByStudent(user.id) : teamsAPI.getAll()
       ]);
       setClasses(classesRes.data.data?.items || []);
       setTeams(teamsRes.data.data?.items || []);

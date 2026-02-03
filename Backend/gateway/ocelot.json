@@ -10,7 +10,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/projects/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
@@ -25,7 +25,127 @@
         }
       ],
       "UpstreamPathTemplate": "/api/milestones/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/classes/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "class-service",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/classes/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/subjects/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "subject-service",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/subjects/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/syllabi/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "subject-service",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/syllabi/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/teams/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "team-service",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/teams/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/checkpoints/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "team-service",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/checkpoints/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/workspaces/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "team-service",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/workspaces/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/teammilestones/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "team-service",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/teammilestones/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/evaluations/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "evaluation-service",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/evaluations/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }

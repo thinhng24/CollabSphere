@@ -52,7 +52,8 @@ const ChatPage: React.FC = () => {
 
   const loadRooms = async () => {
     try {
-      const response = await chatAPI.getRooms(user?.id);
+      if (!user?.id) return;
+      const response = await chatAPI.getRooms(user.id);
       setRooms(response.data.data?.items || []);
     } catch (err) {
       console.error('Failed to load chat rooms', err);
@@ -78,7 +79,10 @@ const ChatPage: React.FC = () => {
 
     try {
       const response = await chatAPI.sendMessage(selectedRoom.id, user.id, newMessage);
-      setMessages(prev => [...prev, response.data.data]);
+      const messageData = response.data.data;
+      if (messageData) {
+        setMessages(prev => [...prev, messageData]);
+      }
       setNewMessage('');
     } catch (err) {
       console.error('Failed to send message', err);
