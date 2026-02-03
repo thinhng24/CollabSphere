@@ -99,10 +99,6 @@ builder.Services.AddAuthorization();
 
 // Register repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IRepository<TeamMember>>(provider =>
-    new GenericRepository<TeamMember>(provider.GetRequiredService<TeamDbContext>()));
-builder.Services.AddScoped<IRepository<CheckpointAssignment>>(provider =>
-    new GenericRepository<CheckpointAssignment>(provider.GetRequiredService<TeamDbContext>()));
 
 // Register services
 builder.Services.AddScoped<ITeamService, TeamServiceImpl>();

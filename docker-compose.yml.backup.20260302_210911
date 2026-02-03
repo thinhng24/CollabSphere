@@ -81,7 +81,7 @@ services:
       dockerfile: gateway/Dockerfile
     container_name: collabsphere-gateway
     ports:
-      - "5001:8080"
+      - "5000:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080

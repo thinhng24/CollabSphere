@@ -247,7 +247,7 @@ public class TeamServiceImpl : ITeamService
             return Result.Failure("Team not found", "NOT_FOUND");
         }
 
-        var existingMembers = await _context.GetAll()
+        var existingMembers = await _context.TeamMembers
             .Where(m => m.TeamId == teamId)
             .Select(m => m.StudentId)
             .ToListAsync();
@@ -274,14 +274,14 @@ public class TeamServiceImpl : ITeamService
 
     public async Task<Result> RemoveTeamMemberAsync(Guid teamId, Guid studentId)
     {
-        var member = await _context.FirstOrDefaultAsync(m => m.TeamId == teamId && m.StudentId == studentId);
+        var member = await _context.TeamMembers.FirstOrDefaultAsync(m => m.TeamId == teamId && m.StudentId == studentId);
 
         if (member == null)
         {
             return Result.Failure("Team member not found", "NOT_FOUND");
         }
 
-        await _context.DeleteAsync(member);
+        _context.TeamMembers.Remove(member);
         await _context.SaveChangesAsync();
 
         return Result.Success("Team member removed successfully");
@@ -289,7 +289,7 @@ public class TeamServiceImpl : ITeamService
 
     public async Task<Result> UpdateMemberContributionAsync(Guid teamId, UpdateContributionDto dto)
     {
-        var member = await _context.FirstOrDefaultAsync(m => m.TeamId == teamId && m.StudentId == dto.StudentId);
+        var member = await _context.TeamMembers.FirstOrDefaultAsync(m => m.TeamId == teamId && m.StudentId == dto.StudentId);
 
         if (member == null)
         {
@@ -298,7 +298,7 @@ public class TeamServiceImpl : ITeamService
 
         member.ContributionPercentage = dto.ContributionPercentage;
 
-        await _context.UpdateAsync(member);
+        _context.TeamMembers.Update(member);
         await _context.SaveChangesAsync();
 
         return Result.Success("Contribution percentage updated successfully");
