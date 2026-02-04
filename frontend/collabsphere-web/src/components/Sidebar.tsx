@@ -24,7 +24,13 @@ import ChatIcon from '@mui/icons-material/Chat';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import PersonIcon from '@mui/icons-material/Person';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import TimelineIcon from '@mui/icons-material/Timeline';
+import QuizIcon from '@mui/icons-material/Quiz';
+import StarIcon from '@mui/icons-material/Star';
+import RateReviewIcon from '@mui/icons-material/RateReview';
+import DrawIcon from '@mui/icons-material/Draw';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { useAuth } from '../context/AuthContext';
@@ -85,6 +91,12 @@ const Sidebar: React.FC = () => {
           show: isLecturer() || isHeadDept() || isAdmin() || isStaff()
         },
         {
+          text: 'Syllabi',
+          icon: <MenuBookIcon />,
+          path: '/syllabi',
+          show: isHeadDept() || isAdmin() || isStaff()
+        },
+        {
           text: 'Classes',
           icon: <SchoolIcon />,
           path: '/classes',
@@ -100,6 +112,12 @@ const Sidebar: React.FC = () => {
           text: 'Review Projects',
           icon: <ApprovalIcon />,
           path: '/review',
+          show: isHeadDept()
+        },
+        {
+          text: 'Assign Projects',
+          icon: <AssignmentIcon />,
+          path: '/assign-projects',
           show: isHeadDept()
         },
         {
@@ -120,6 +138,30 @@ const Sidebar: React.FC = () => {
           show: isLecturer() || isStudent()
         },
         {
+          text: 'Manage Teams',
+          icon: <GroupIcon />,
+          path: '/teams/manage',
+          show: isLecturer()
+        },
+        {
+          text: 'Progress Monitoring',
+          icon: <TimelineIcon />,
+          path: '/progress',
+          show: isLecturer()
+        },
+        {
+          text: 'Milestone Questions',
+          icon: <QuizIcon />,
+          path: '/milestone-questions',
+          show: isLecturer()
+        },
+        {
+          text: 'Evaluation & Feedback',
+          icon: <RateReviewIcon />,
+          path: '/evaluation',
+          show: isLecturer()
+        },
+        {
           text: 'Checkpoints',
           icon: <AssignmentIcon />,
           path: '/checkpoints',
@@ -129,6 +171,18 @@ const Sidebar: React.FC = () => {
           text: 'Workspace',
           icon: <WorkspacesIcon />,
           path: '/workspace',
+          show: isStudent()
+        },
+        {
+          text: 'Whiteboard',
+          icon: <DrawIcon />,
+          path: '/whiteboard/1',
+          show: isLecturer() || isStudent()
+        },
+        {
+          text: 'Peer Evaluation',
+          icon: <StarIcon />,
+          path: '/peer-evaluation',
           show: isStudent()
         }
       ]
@@ -153,6 +207,12 @@ const Sidebar: React.FC = () => {
           icon: <FolderSharedIcon />,
           path: '/resources',
           show: isLecturer() || isStudent()
+        },
+        {
+          text: 'AI Assistant',
+          icon: <SmartToyIcon />,
+          path: '/ai-assistant',
+          show: isLecturer() || isStudent()
         }
       ]
     },
@@ -176,6 +236,12 @@ const Sidebar: React.FC = () => {
           icon: <GroupIcon />,
           path: '/admin/teams',
           show: isAdmin() || isStaff()
+        },
+        {
+          text: 'Assign Users',
+          icon: <AssignmentIcon />,
+          path: '/staff/assign',
+          show: isStaff()
         }
       ]
     }

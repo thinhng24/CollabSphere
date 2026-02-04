@@ -12,12 +12,19 @@ import DashboardLayout from './components/DashboardLayout';
 // Lazy load all other pages for code splitting
 const LecturerDashboard = lazy(() => import('./pages/LecturerDashboard'));
 const HeadDeptDashboard = lazy(() => import('./pages/HeadDeptDashboard'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const StaffDashboard = lazy(() => import('./pages/StaffDashboard'));
+const StudentDashboard = lazy(() => import('./pages/StudentDashboard'));
 const SubjectsPage = lazy(() => import('./pages/SubjectsPage'));
+const SyllabusManagementPage = lazy(() => import('./pages/SyllabusManagementPage'));
+const AssignProjectsPage = lazy(() => import('./pages/AssignProjectsPage'));
+const AssignUsersPage = lazy(() => import('./pages/AssignUsersPage'));
 const ClassesPage = lazy(() => import('./pages/ClassesPage'));
 const ProjectsPage = lazy(() => import('./pages/ProjectsPage'));
 const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
-const ImportExcelPage = lazy(() => import('./pages/ImportExcelPage'));
+const EnhancedImportPage = lazy(() => import('./pages/EnhancedImportPage'));
 const TeamsPage = lazy(() => import('./pages/TeamsPage'));
+const TeamManagementPage = lazy(() => import('./pages/TeamManagementPage'));
 const CheckpointsPage = lazy(() => import('./pages/CheckpointsPage'));
 const WorkspacePage = lazy(() => import('./pages/WorkspacePage'));
 const ChatPage = lazy(() => import('./pages/ChatPage'));
@@ -25,6 +32,16 @@ const MeetingsPage = lazy(() => import('./pages/MeetingsPage'));
 const ResourcesPage = lazy(() => import('./pages/ResourcesPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const AdminUsersPage = lazy(() => import('./pages/AdminUsersPage'));
+const SystemReportsPage = lazy(() => import('./pages/SystemReportsPage'));
+const AIChatbotPage = lazy(() => import('./pages/AIChatbotPage'));
+const ProgressMonitoringPage = lazy(() => import('./pages/ProgressMonitoringPage'));
+const MilestoneQuestionsPage = lazy(() => import('./pages/MilestoneQuestionsPage'));
+const AnswerMilestoneQuestionsPage = lazy(() => import('./pages/AnswerMilestoneQuestionsPage'));
+const PeerEvaluationPage = lazy(() => import('./pages/PeerEvaluationPage'));
+const CheckpointManagementPage = lazy(() => import('./pages/CheckpointManagementPage'));
+const EvaluationFeedbackPage = lazy(() => import('./pages/EvaluationFeedbackPage'));
+const CollaborativeEditorPage = lazy(() => import('./pages/CollaborativeEditorPage'));
+const WhiteboardPage = lazy(() => import('./pages/WhiteboardPage'));
 
 const theme = createTheme({
   palette: {
@@ -68,13 +85,16 @@ const AppRoutes: React.FC = () => {
 
   const getDashboardComponent = () => {
     switch (user?.role) {
+      case 'Admin':
+        return <AdminDashboard />;
       case 'HeadDepartment':
         return <HeadDeptDashboard />;
-      case 'Admin':
       case 'Staff':
+        return <StaffDashboard />;
+      case 'Lecturer':
         return <LecturerDashboard />;
       case 'Student':
-        return <LecturerDashboard />;
+        return <StudentDashboard />;
       default:
         return <LecturerDashboard />;
     }
@@ -117,6 +137,18 @@ const AppRoutes: React.FC = () => {
           <PrivateRoute>
             <DashboardLayout title="Subjects">
               <SubjectsPage />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      {/* Academic - Syllabi */}
+      <Route
+        path="/syllabi"
+        element={
+          <PrivateRoute>
+            <DashboardLayout title="Syllabus Management">
+              <SyllabusManagementPage />
             </DashboardLayout>
           </PrivateRoute>
         }
@@ -168,13 +200,25 @@ const AppRoutes: React.FC = () => {
         }
       />
 
+      {/* Academic - Assign Projects (HeadDept) */}
+      <Route
+        path="/assign-projects"
+        element={
+          <PrivateRoute>
+            <DashboardLayout title="Assign Projects">
+              <AssignProjectsPage />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
       {/* Academic - Import */}
       <Route
         path="/import"
         element={
           <PrivateRoute>
             <DashboardLayout title="Import Data">
-              <ImportExcelPage />
+              <EnhancedImportPage />
             </DashboardLayout>
           </PrivateRoute>
         }
@@ -187,6 +231,18 @@ const AppRoutes: React.FC = () => {
           <PrivateRoute>
             <DashboardLayout title="My Teams">
               <TeamsPage />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      {/* Teams - Management (Lecturer) */}
+      <Route
+        path="/teams/manage"
+        element={
+          <PrivateRoute>
+            <DashboardLayout title="Team Management">
+              <TeamManagementPage />
             </DashboardLayout>
           </PrivateRoute>
         }
@@ -214,6 +270,18 @@ const AppRoutes: React.FC = () => {
         }
       />
 
+      {/* Teams - Checkpoint Management (Team Leader) */}
+      <Route
+        path="/checkpoints/:teamId/manage"
+        element={
+          <PrivateRoute>
+            <DashboardLayout title="Manage Checkpoints">
+              <CheckpointManagementPage />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
       {/* Teams - Workspace */}
       <Route
         path="/workspace"
@@ -231,6 +299,90 @@ const AppRoutes: React.FC = () => {
           <PrivateRoute>
             <DashboardLayout title="Team Workspace">
               <WorkspacePage />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      {/* Teams - Progress Monitoring */}
+      <Route
+        path="/progress"
+        element={
+          <PrivateRoute>
+            <DashboardLayout title="Progress Monitoring">
+              <ProgressMonitoringPage />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      {/* Teams - Milestone Questions */}
+      <Route
+        path="/milestone-questions"
+        element={
+          <PrivateRoute>
+            <DashboardLayout title="Milestone Questions">
+              <MilestoneQuestionsPage />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      {/* Teams - Answer Milestone Questions */}
+      <Route
+        path="/milestones/:milestoneId/answer"
+        element={
+          <PrivateRoute>
+            <DashboardLayout title="Answer Questions">
+              <AnswerMilestoneQuestionsPage />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      {/* Teams - Peer Evaluation */}
+      <Route
+        path="/peer-evaluation"
+        element={
+          <PrivateRoute>
+            <DashboardLayout title="Peer Evaluation">
+              <PeerEvaluationPage />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      {/* Teams - Evaluation & Feedback */}
+      <Route
+        path="/evaluation"
+        element={
+          <PrivateRoute>
+            <DashboardLayout title="Evaluation & Feedback">
+              <EvaluationFeedbackPage />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      {/* Teams - Collaborative Editor */}
+      <Route
+        path="/editor/:documentId"
+        element={
+          <PrivateRoute>
+            <DashboardLayout title="Collaborative Editor">
+              <CollaborativeEditorPage />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      {/* Teams - Whiteboard */}
+      <Route
+        path="/whiteboard/:teamId"
+        element={
+          <PrivateRoute>
+            <DashboardLayout title="Whiteboard">
+              <WhiteboardPage />
             </DashboardLayout>
           </PrivateRoute>
         }
@@ -272,6 +424,18 @@ const AppRoutes: React.FC = () => {
         }
       />
 
+      {/* Communication - AI Chatbot */}
+      <Route
+        path="/ai-assistant"
+        element={
+          <PrivateRoute>
+            <DashboardLayout title="AI Assistant">
+              <AIChatbotPage />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
       {/* Admin - User Management */}
       <Route
         path="/admin/users"
@@ -279,6 +443,18 @@ const AppRoutes: React.FC = () => {
           <PrivateRoute>
             <DashboardLayout title="User Management">
               <AdminUsersPage />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      {/* Admin - System Reports */}
+      <Route
+        path="/admin/reports"
+        element={
+          <PrivateRoute>
+            <DashboardLayout title="System Reports">
+              <SystemReportsPage />
             </DashboardLayout>
           </PrivateRoute>
         }
@@ -303,6 +479,18 @@ const AppRoutes: React.FC = () => {
           <PrivateRoute>
             <DashboardLayout title="All Teams">
               <TeamsPage />
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      {/* Staff - Assign Users */}
+      <Route
+        path="/staff/assign"
+        element={
+          <PrivateRoute>
+            <DashboardLayout title="Assign Users to Classes">
+              <AssignUsersPage />
             </DashboardLayout>
           </PrivateRoute>
         }
