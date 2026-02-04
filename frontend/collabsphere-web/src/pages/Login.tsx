@@ -11,11 +11,12 @@ import {
 } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 
-type DemoRole = 'lecturer' | 'head';
+type DemoRole = 'admin' | 'lecturer' | 'student';
 
 interface DemoAccount {
   email: string;
   password: string;
+  label: string;
 }
 
 const Login: React.FC = () => {
@@ -37,12 +38,25 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleDemoLogin = (role: DemoRole) => {
-    const demoAccounts: Record<DemoRole, DemoAccount> = {
-      lecturer: { email: 'lecturer@collabsphere.com', password: 'demo123' },
-      head: { email: 'head@collabsphere.com', password: 'demo123' }
-    };
+  const demoAccounts: Record<DemoRole, DemoAccount> = {
+    admin: {
+      email: 'admin@collabsphere.com',
+      password: 'admin123',
+      label: 'Admin'
+    },
+    lecturer: {
+      email: 'lecturer@collabsphere.com',
+      password: 'lecturer123',
+      label: 'Teacher (Lecturer)'
+    },
+    student: {
+      email: 'student@collabsphere.com',
+      password: 'student123',
+      label: 'Student'
+    }
+  };
 
+  const handleDemoLogin = (role: DemoRole) => {
     const account = demoAccounts[role];
     setEmail(account.email);
     setPassword(account.password);
@@ -98,22 +112,22 @@ const Login: React.FC = () => {
             <Typography variant="body2" color="textSecondary" gutterBottom>
               Demo Accounts:
             </Typography>
-            <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-              <Button
-                size="small"
-                variant="outlined"
-                onClick={() => handleDemoLogin('lecturer')}
-              >
-                Lecturer Demo
-              </Button>
-              <Button
-                size="small"
-                variant="outlined"
-                onClick={() => handleDemoLogin('head')}
-              >
-                Head Dept Demo
-              </Button>
+            <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
+              {Object.entries(demoAccounts).map(([role, account]) => (
+                <Button
+                  key={role}
+                  size="small"
+                  variant="outlined"
+                  onClick={() => handleDemoLogin(role as DemoRole)}
+                  sx={{ flex: '1 1 auto' }}
+                >
+                  {account.label}
+                </Button>
+              ))}
             </Box>
+            <Typography variant="caption" color="textSecondary" sx={{ display: 'block', mt: 1.5 }}>
+              Click a demo account button to auto-fill credentials
+            </Typography>
           </Box>
         </Box>
       </Paper>
